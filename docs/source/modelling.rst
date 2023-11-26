@@ -96,7 +96,7 @@ discussed further below, has the following runtime for different resolutions:
 always the same, just scaled, and there was no objective, i.e., only a feasible
 solution had to be found. Note that this is just an example, not a
 representative benchmark. See
-`./examples/add_no_overlap_2d_scaling.ipynb <./examples/add_no_overlap_2d_scaling.ipynb>`_
+`./examples/add_no_overlap_2d_scaling.ipynb <https://github.com/d-krupke/cpsat-primer/blob/rst/examples/add_no_overlap_2d_scaling.ipynb>`_
 for the code. If you have a problem with a lot of continuous variables, such as
 `network flow problems <https://en.wikipedia.org/wiki/Network_flow_problem>`_, you
 are probably better served with a MIP-solver.
