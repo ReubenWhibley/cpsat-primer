@@ -53,6 +53,7 @@ After that (or if you are already familiar with combinatorial optimization), the
    modelling
    parameters
    how-does-it-work
+   benchmarking-your-model
    large-neighborhood-search
 
 **Content:**
@@ -65,7 +66,8 @@ After that (or if you are already familiar with combinatorial optimization), the
    parallelization, ...
 5. :doc:`how-does-it-work`: After we know what we can do with CP-SAT, we look into how CP-SAT will do all
    these things.
-6. :doc:`large-neighborhood-search`: The use of CP-SAT to create more powerful heuristics.
+6. :doc:`benchmarking-your-model`: How to benchmark your model and how to interpret the results.  
+7. :doc:`large-neighborhood-search`: The use of CP-SAT to create more powerful heuristics.
 
 **Target audience**:
    
@@ -81,6 +83,9 @@ After that (or if you are already familiar with combinatorial optimization), the
   `Dr. Dominik Krupke <https://krupke.cc>`_ is a postdoctoral researcher at the `Algorithms Group <https://www.ibr.cs.tu-bs.de/alg>`_ at TU Braunschweig,
   where he researches and teaches on how to solve NP-hard problems in practice. He started writing this primer as course material for his students,
   but continued and extended it (mostly in his spare time) to make it available to a wider audience.
+
+
+
 
 
 

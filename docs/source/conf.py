@@ -8,25 +8,23 @@
 
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here.
-import pathlib
+
+import os
 import sys
 
-sys.path.insert(0, pathlib.Path(__file__).parents[2].resolve().as_posix())
+sys.path.insert(0, os.path.abspath("../../"))
 
 project = 'cpsat-primer'
-copyright = '2023, Dominik Krupke'
-author = 'Dominik Krupke'
+copyright = "2023, Dominik Krupke (TU Braunschweig, IBR, Algorithms Group)"
+author = "Dominik Krupke (TU Braunschweig, IBR, Algorithms Group)"
 release = '1.0.0'
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
 
 extensions = [
-    'sphinx.ext.todo',
     'sphinx.ext.viewcode',
-    'sphinx.ext.doctest',
     'sphinx.ext.autodoc',
-    'sphinx.ext.autosummary',
 ]
 
 templates_path = ['_templates']
