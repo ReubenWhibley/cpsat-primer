@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="english" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Modelling &mdash; cpsat-primer 1.0.0 documentation</title><link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Parameters" href="parameters.html" />
+    <link rel="prev" title="Example" href="example.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            cpsat-primer
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption"><span class="caption-text">content:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example.html">Example</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Modelling</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#variables">Variables</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="parameters.html">Parameters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="how-does-it-work.html">How does it work</a></li>
+<li class="toctree-l1"><a class="reference internal" href="benchmarking-your-model.html">Benchmarking your model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="large-neighborhood-search.html">Large neighborhood search</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">cpsat-primer</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Modelling</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/modelling.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="section" id="modelling">
+<h1>Modelling<a class="headerlink" href="#modelling" title="Permalink to this headline">¶</a></h1>
+<p>CP-SAT provides us with much more modelling options than the classical
+MIP-solver. Instead of just the classical linear constraints (&lt;=, ==, &gt;=), we
+have various advanced constraints such as <code class="docutils literal notranslate"><span class="pre">AllDifferent</span></code> or
+<code class="docutils literal notranslate"><span class="pre">AddMultiplicationEquality</span></code>. This spares you the burden of modelling the logic
+only with linear constraints, but also makes the interface more extensive.
+Additionally, you have to be aware that not all constraints are equally
+efficient. The most efficient constraints are linear or boolean constraints.
+Constraints such as <code class="docutils literal notranslate"><span class="pre">AddMultiplicationEquality</span></code> can be significantly(!!!) more
+expensive.</p>
+<blockquote>
+<div><p><strong>If you are coming from the MIP-world, you should not overgeneralize your
+experience</strong> to CP-SAT as the underlying techniques are different. It does not
+rely on the linear relaxation as much as MIP-solvers do. Thus, you can often
+use modelling techniques that are not efficient in MIP-solvers, but perform
+reasonably well in CP-SAT. For example, I had a model that required multiple
+absolute values and performed significantly better in CP-SAT than in Gurobi
+(despite a manual implementation with relatively tight big-M values).</p>
+</div></blockquote>
+<p>This primer does not have the space to teach about building good models. In the
+following, we will primarily look onto a selection of useful constraints. If you
+want to learn how to build models, you could take a look into the book
+<a class="reference external" href="https://www.wiley.com/en-us/Model+Building+in+Mathematical+Programming%2C+5th+Edition-p-9781118443330">Model Building in Mathematical Programming by H. Paul Williams</a>
+which covers much more than you probably need, including some actual
+applications. This book is of course not for CP-SAT, but the general techniques
+and ideas carry over. However, it can also suffice to simply look on some other
+models and try some things out. If you are completely new to this area, you may
+want to check out modelling for the MIP-solver Gurobi in this
+<a class="reference external" href="https://www.youtube.com/playlist?list=PLHiHZENG6W8CezJLx_cw9mNqpmviq3lO9">video course</a>.
+Remember that many things are similar to CP-SAT, but not everything (as already
+mentioned, CP-SAT is especially interesting for the cases where a MIP-solver
+fails).</p>
+<p>The following part does not cover all constraints. You can get a complete
+overview by looking into the
+<a class="reference external" href="https://developers.google.com/optimization/reference/python/sat/python/cp_model#cp_model.CpModel">official documentation</a>.
+Simply go to <code class="docutils literal notranslate"><span class="pre">CpModel</span></code> and check out the <code class="docutils literal notranslate"><span class="pre">AddXXX</span></code> and <code class="docutils literal notranslate"><span class="pre">NewXXX</span></code> methods.</p>
+<p>Resources on mathematical modelling (not CP-SAT specific):</p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://www.gurobi.com/resources/math-programming-modeling-basics/">Math Programming Modeling Basics by Gurobi</a>:
+Get the absolute basics.</p></li>
+<li><p><a class="reference external" href="https://www.youtube.com/playlist?list=PLHiHZENG6W8CezJLx_cw9mNqpmviq3lO9">Modeling with Gurobi Python</a>:
+A video course on modelling with Gurobi. The concepts carry over to CP-SAT.</p></li>
+<li><p><a class="reference external" href="https://www.wiley.com/en-us/Model+Building+in+Mathematical+Programming%2C+5th+Edition-p-9781118443330">Model Building in Mathematical Programming by H. Paul Williams</a>:
+A complete book on mathematical modelling.</p></li>
+</ul>
+<div class="section" id="variables">
+<h2>Variables<a class="headerlink" href="#variables" title="Permalink to this headline">¶</a></h2>
+<p>There are two important types of variables in CP-SAT: Booleans and Integers
+(which are actually converted to Booleans, but more on this later). There are
+also, e.g.,
+<a class="reference external" href="https://developers.google.com/optimization/reference/python/sat/python/cp_model#intervalvar">interval variables</a>,
+but they are not as important and can be modelled easily with integer variables.
+For the integer variables, you have to specify a lower and an upper bound.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># integer variable z with bounds -100 &lt;= z &lt;= 100</span>
+<span class="n">z</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">NewIntVar</span><span class="p">(</span><span class="o">-</span><span class="mi">100</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="s2">&quot;z&quot;</span><span class="p">)</span>
+<span class="c1"># boolean variable b</span>
+<span class="n">b</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">NewBoolVar</span><span class="p">(</span><span class="s2">&quot;b&quot;</span><span class="p">)</span>
+<span class="c1"># implicitly available negation of b:</span>
+<span class="n">not_b</span> <span class="o">=</span> <span class="n">b</span><span class="o">.</span><span class="n">Not</span><span class="p">()</span>  <span class="c1"># will be 1 if b is 0 and 0 if b is 1</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Having tight bounds on the integer variables can make a huge impact on the
+performance. It may be useful to run some optimization heuristics beforehand
+to get some bounds. Reducing it by a few percent can already pay off for some
+problems.</p>
+</div>
+<p>There are no continuous/floating point variables (or even constants) in CP-SAT:
+If you need floating point numbers, you have to approximate them with integers
+by some resolution. For example, you could simply multiply all values by 100 for
+a step size of 0.01. A value of 2.35 would then be represented by 235. This
+could probably be implemented in CP-SAT directly, but doing it explicitly is
+not difficult, and it has numerical implications that you should be aware of.</p>
+<p>The lack of continuous variables may sound like a serious limitation, especially
+if you have a background in linear optimization (where continuous variables are
+the &quot;easy part&quot;), but as long as they are not a huge part of your problem, you
+can often work around it. I had problems with many continuous variables on which
+I had to apply absolute values and conditional linear constraints, and CP-SAT
+performed much better than Gurobi, which is known to be very good at continuous
+variables. In this case, CP-SAT struggled less with the continuous variables
+(Gurobi's strength), than Gurobi with the logical constraints (CP-SAT's
+strength). In a further analysis, I noted an only logarithmic increase of the
+runtime with the resolution. However, there are also problems for which a higher
+resolution can drastically increase the runtime. The packing problem, which is
+discussed further below, has the following runtime for different resolutions:
+1x: 0.02s, 10x: 0.7s, 100x: 7.6s, 1000x: 75s, 10_000x: &gt;15min. The solution was
+always the same, just scaled, and there was no objective, i.e., only a feasible
+solution had to be found. Note that this is just an example, not a
+representative benchmark. See
+<a class="reference external" href="https://github.com/d-krupke/cpsat-primer/blob/rst/examples/add_no_overlap_2d_scaling.ipynb">./examples/add_no_overlap_2d_scaling.ipynb</a>
+for the code. If you have a problem with a lot of continuous variables, such as
+<a class="reference external" href="https://en.wikipedia.org/wiki/Network_flow_problem">network flow problems</a>, you
+are probably better served with a MIP-solver.</p>
+<p>In my experience, boolean variables are by far the most important variables in
+many combinatorial optimization problems. Many problems, such as the famous
+Traveling Salesman Problem, only consist of boolean variables. Implementing a
+solver specialized on boolean variables by using a SAT-solver as a base, such as
+CP-SAT, thus, is quite sensible. The resolution of coefficients (in combination
+with boolean variables) is less critical than for variables.</p>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="example.html" class="btn btn-neutral float-left" title="Example" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="parameters.html" class="btn btn-neutral float-right" title="Parameters" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Dominik Krupke (TU Braunschweig, IBR, Algorithms Group).</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

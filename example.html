@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="english" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Example &mdash; cpsat-primer 1.0.0 documentation</title><link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Modelling" href="modelling.html" />
+    <link rel="prev" title="Installation" href="installation.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            cpsat-primer
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption"><span class="caption-text">content:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modelling.html">Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="parameters.html">Parameters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="how-does-it-work.html">How does it work</a></li>
+<li class="toctree-l1"><a class="reference internal" href="benchmarking-your-model.html">Benchmarking your model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="large-neighborhood-search.html">Large neighborhood search</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">cpsat-primer</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Example</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/example.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="section" id="example">
+<h1>Example<a class="headerlink" href="#example" title="Permalink to this headline">¶</a></h1>
+<p>Before we dive into any internals, let us take a quick look at a simple application of CP-SAT. This example is so simple
+that you could solve it by hand, but know that CP-SAT would (probably) be fine with you adding a thousand (maybe even
+ten- or hundred-thousand) variables and constraints more.
+The basic idea of using CP-SAT is, analogous to MIPs, to define an optimization problem in terms of variables,
+constraints, and objective function, and then let the solver find a solution for it.
+We call such a formulation that can be understood by the corresponding solver a <em>model</em> for the problem.
+For people not familiar with this <a class="reference external" href="https://programiz.pro/resources/imperative-vs-declarative-programming/">declarative approach</a>,
+you can compare it to SQL, where you also just state what data you want, not how to get it.
+However, it is not purely declarative, because it can still make a huge(!) difference how you model the problem and
+getting that right takes some experience and understanding of the internals.
+You can still get lucky for smaller problems (let us say a few hundred to thousands of variables) and obtain optimal
+solutions without having an idea of what is going on.
+The solvers can handle more and more 'bad' problem models effectively with every year.</p>
+<blockquote>
+<div><p><strong>Definition:</strong> A <em>model</em> in mathematical programming refers to a mathematical description of a problem, consisting of
+variables, constraints, and optionally an objective function that can be understood by the corresponding solver class.
+<em>Modelling</em> refers to transforming a problem (instance) into the corresponding framework, e.g.,
+by making all constraints linear as required for Mixed Integer Linear Programming.
+Be aware that the <a class="reference external" href="https://en.wikipedia.org/wiki/SAT_solver">SAT</a>-community uses the term <em>model</em> to refer to a (feasible)
+variable assignment, i.e., solution of a SAT-formula. If you struggle with this terminology, maybe you want to read
+this short guide on <a class="reference external" href="https://www.gurobi.com/resources/math-programming-modeling-basics/">Math Programming Modelling Basics</a>.</p>
+</div></blockquote>
+<p>Our first problem has no deeper meaning, except of showing the basic workflow of creating the variables (x and y), adding the
+constraint x+y&lt;=30 on them, setting the objective function (maximize 30*x + 50*y), and obtaining a solution:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">ortools.sat.python</span> <span class="kn">import</span> <span class="n">cp_model</span>
+
+<span class="n">model</span> <span class="o">=</span> <span class="n">cp_model</span><span class="o">.</span><span class="n">CpModel</span><span class="p">()</span>
+
+<span class="c1"># Variables</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">NewIntVar</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="s1">&#39;x&#39;</span><span class="p">)</span>  <span class="c1"># you always need to specify an upper bound.</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">NewIntVar</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="s1">&#39;y&#39;</span><span class="p">)</span>
+<span class="c1"># there are also no continuous variables: You have to decide for a resolution and then work on integers.</span>
+
+<span class="c1"># Constraints</span>
+<span class="n">model</span><span class="o">.</span><span class="n">Add</span><span class="p">(</span><span class="n">x</span> <span class="o">+</span> <span class="n">y</span> <span class="o">&lt;=</span> <span class="mi">30</span><span class="p">)</span>
+
+<span class="c1"># Objective</span>
+<span class="n">model</span><span class="o">.</span><span class="n">Maximize</span><span class="p">(</span><span class="mi">30</span> <span class="o">*</span> <span class="n">x</span> <span class="o">+</span> <span class="mi">50</span> <span class="o">*</span> <span class="n">y</span><span class="p">)</span>
+
+<span class="c1"># Solve</span>
+<span class="n">solver</span> <span class="o">=</span> <span class="n">cp_model</span><span class="o">.</span><span class="n">CpSolver</span><span class="p">()</span>  <span class="c1"># Contrary to Gurobi, model and solver are separated.</span>
+<span class="n">status</span> <span class="o">=</span> <span class="n">solver</span><span class="o">.</span><span class="n">Solve</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+<span class="k">assert</span> <span class="n">status</span> <span class="o">==</span> <span class="n">cp_model</span><span class="o">.</span><span class="n">OPTIMAL</span>  <span class="c1"># The status tells us if we were able to compute a solution.</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;x={solver.Value(x)},  y={solver.Value(y)}&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;=====Stats:======&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">solver</span><span class="o">.</span><span class="n">SolutionInfo</span><span class="p">())</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">solver</span><span class="o">.</span><span class="n">ResponseStats</span><span class="p">())</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">x</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>  <span class="n">y</span><span class="o">=</span><span class="mi">30</span>
+<span class="o">=====</span><span class="n">Stats</span><span class="p">:</span><span class="o">======</span>
+<span class="n">default_lp</span>
+<span class="n">CpSolverResponse</span> <span class="n">summary</span><span class="p">:</span>
+<span class="n">status</span><span class="p">:</span> <span class="n">OPTIMAL</span>
+<span class="n">objective</span><span class="p">:</span> <span class="mi">1500</span>
+<span class="n">best_bound</span><span class="p">:</span> <span class="mi">1500</span>
+<span class="n">booleans</span><span class="p">:</span> <span class="mi">1</span>
+<span class="n">conflicts</span><span class="p">:</span> <span class="mi">0</span>
+<span class="n">branches</span><span class="p">:</span> <span class="mi">1</span>
+<span class="n">propagations</span><span class="p">:</span> <span class="mi">0</span>
+<span class="n">integer_propagations</span><span class="p">:</span> <span class="mi">2</span>
+<span class="n">restarts</span><span class="p">:</span> <span class="mi">1</span>
+<span class="n">lp_iterations</span><span class="p">:</span> <span class="mi">0</span>
+<span class="n">walltime</span><span class="p">:</span> <span class="mf">0.00289923</span>
+<span class="n">usertime</span><span class="p">:</span> <span class="mf">0.00289951</span>
+<span class="n">deterministic_time</span><span class="p">:</span> <span class="mf">8e-08</span>
+<span class="n">gap_integral</span><span class="p">:</span> <span class="mf">5.11888e-07</span>
+</pre></div>
+</div>
+<p>Pretty easy, right? For solving a generic problem, not just one specific instance, you would of course create a
+dictionary or list of variables and use something like <code class="docutils literal notranslate"><span class="pre">model.Add(sum(vars)&lt;=n)</span></code>, because you don't want to create
+the model by hand for larger instances.</p>
+<p>The output you get may differ from the one above, because CP-SAT actually uses a set of different strategies
+in parallel, and just returns the best one (which can differ slightly between multiple runs due to additional randomness).
+This is called a portfolio strategy and is a common technique in combinatorial optimization, if you cannot predict
+which strategy will perform best.</p>
+<p>The mathematical model of the code above would usually be written by experts something like this:</p>
+<div class="math notranslate nohighlight">
+\[\max 30x + 50y\]</div>
+<div class="math notranslate nohighlight">
+\[\text{s.t. } x+y \leq 30\]</div>
+<div class="math notranslate nohighlight">
+\[\quad 0\leq x \leq 100\]</div>
+<div class="math notranslate nohighlight">
+\[\quad 0\leq y \leq 100\]</div>
+<div class="math notranslate nohighlight">
+\[x,y \in \mathbb{Z}\]</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">s.t.</span></code> stands for <code class="docutils literal notranslate"><span class="pre">subject</span> <span class="pre">to</span></code>, sometimes also read as <code class="docutils literal notranslate"><span class="pre">such</span> <span class="pre">that</span></code>.</p>
+<p>Here are some further examples, if you are not yet satisfied:</p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://developers.google.com/optimization/cp/queens">N-queens</a> (this one
+also gives you a quick introduction to constraint programming, but it may be
+misleading because CP-SAT is no classical
+<a class="reference external" href="http://www.gameaipro.com/GameAIPro2/GameAIPro2_Chapter26_Rolling_Your_Own_Finite-Domain_Constraint_Solver.pdf">FD(Finite Domain)-solver</a>.
+This example probably has been modified from the previous generation, which is
+also explained at the end.)</p></li>
+<li><p><a class="reference external" href="https://developers.google.com/optimization/scheduling/employee_scheduling">Employee Scheduling</a></p></li>
+<li><p><a class="reference external" href="https://developers.google.com/optimization/scheduling/job_shop">Job Shop Problem</a></p></li>
+<li><p>More examples can be found in
+<a class="reference external" href="https://github.com/google/or-tools/tree/stable/ortools/sat/samples">the official repository</a>
+for multiple languages (yes, CP-SAT does support more than just Python). As
+the Python-examples are named in
+<a class="reference external" href="https://en.wikipedia.org/wiki/Snake_case">snake-case</a>, they are at the end of
+the list.</p></li>
+</ul>
+<p>Ok. Now that you have seen a minimal model, let us look on what options we have
+to model a problem. Note that an experienced optimizer may be able to model most
+problems with just the elements shown above, but showing your intentions may
+help CP-SAT optimize your problem better. Contrary to Mixed Integer Programming,
+you also do not need to fine-tune any
+<a class="reference external" href="https://en.wikipedia.org/wiki/Big_M_method">Big-Ms</a> (a reason to model
+higher-level constraints, such as conditional constraints that are only enforced
+if some variable is set to true, in MIPs yourself, because the computer is not
+very good at that).</p>
+</div>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="installation.html" class="btn btn-neutral float-left" title="Installation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="modelling.html" class="btn btn-neutral float-right" title="Modelling" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Dominik Krupke (TU Braunschweig, IBR, Algorithms Group).</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
