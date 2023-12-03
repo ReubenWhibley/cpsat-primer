@@ -48,7 +48,7 @@ Resources on mathematical modelling (not CP-SAT specific):
   A complete book on mathematical modelling.
 
 Variables
-~~~~~~~~~
+---------
 
 There are two important types of variables in CP-SAT: Booleans and Integers
 (which are actually converted to Booleans, but more on this later). There are
@@ -119,7 +119,7 @@ enhance the clarity of the internal representation, making your debugging
 process much more manageable.
 
 Objectives
-~~~~~~~~~~
+----------
 
 Not every problem actually has an objective, sometimes you only need to find a
 feasible solution. CP-SAT is pretty good at doing that (MIP-solvers are often
@@ -181,7 +181,7 @@ of another variable and then use this variable in the objective.
 The available constraints are discussed next.
 
 Linear Constraints
-~~~~~~~~~~~~~~~~~~
+------------------
 
 These are the classical constraints also used in linear optimization. Remember
 that you are still not allowed to use floating point numbers within it. Same as
@@ -216,7 +216,7 @@ use the explicit ``!=`` constraints.
   match exactly.
 
 Logical Constraints (Propositional Logic)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+-----------------------------------------
 
 You can actually model logical constraints also as linear constraints, but it
 may be advantageous to show your intent:
@@ -237,7 +237,7 @@ In this context you could also mention ``AddAtLeastOne``, ``AddAtMostOne``, and
 ``AddExactlyOne``, but these can also be modelled as linear constraints.
 
 Conditional Constraints
-~~~~~~~~~~~~~~~~~~~~~~~
+-----------------------
 
 Linear constraints (Add), BoolOr, and BoolAnd support being activated by a
 condition. This is not only a very helpful constraint for many applications, but
@@ -254,7 +254,7 @@ variable.
   model.Add(x + z == 10).OnlyEnforceIf([b2, b3.Not()])  # only enforce if b2 AND NOT b3
 
 AllDifferent
-~~~~~~~~~~~~
+------------
 
 A constraint that is often seen in Constraint Programming, but I myself was
 always able to deal without it. Still, you may find it important. It forces all
@@ -303,7 +303,7 @@ penalty in the future, but for now, you have to be aware of this. See also
 `the optimization parameter documentation <https://github.com/google/or-tools/blob/1d696f9108a0ebfd99feb73b9211e2f5a6b0812b/ortools/sat/sat_parameters.proto#L542>`_.
 
 Absolute Values and Max/Min
-~~~~~~~~~~~~~~~~~~~~~~~~~~~
+---------------------------
 
 Two often occurring and important operators are absolute values as well as
 minimum and maximum values. You cannot use operators directly in the
@@ -323,7 +323,7 @@ constraint. These constraints are reasonably efficient in my experience.
   model.AddMinEquality(min_xyz, [x, y, z])
 
 Multiplication and Modulo
-~~~~~~~~~~~~~~~~~~~~~~~~~
+-------------------------
 
 A big nono in linear optimization (the most successful optimization area) are
 multiplication of variables (because this would no longer be linear, right...).
@@ -348,7 +348,7 @@ need them and cannot find a way around them.
   investigated this further, as I would expect it to be slow anyway.
 
 Circuit/Tour-Constraints
-~~~~~~~~~~~~~~~~~~~~~~~~
+------------------------
 
 The
 `Traveling Salesman Problem (TSP) <https://en.wikipedia.org/wiki/Travelling_salesman_problem>`_
@@ -538,7 +538,7 @@ eucl. distance) from the TSPLIB with a time limit of 90 seconds.
 +----------+---------+---------+-------------+-----------+----------+
 
 Array operations
-~~~~~~~~~~~~~~~~
+----------------
 
 You can even go completely bonkers and work with arrays in your model. The
 element at a variable index can be accessed via an ``AddElement`` constraint.
@@ -558,7 +558,7 @@ this restricts the values of the variables in the arrays to :math:`0,\ldots, |v|
   model.AddInverse([x, y, z], [z, y, x])
 
 Interval Variables and No-Overlap Constraints
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+---------------------------------------------
 
 CP-SAT also supports interval variables and corresponding constraints. These are
 important for scheduling and packing problems. There are simple no-overlap
@@ -691,7 +691,7 @@ are working with this constraint, you may want to jiggle with these parameters
 if it struggles with solving your instances.
 
 There is more
-~~~~~~~~~~~~~
+-------------
 CP-SAT has even more constraints, but I think I covered the most important ones.
 If you need more, you can check out the
 `official documentation <https://developers.google.com/optimization/reference/python/sat/python/cp_model#cp_model.CpModel>`_.
