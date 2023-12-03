@@ -90,15 +90,16 @@ getting that right takes some experience and understanding of the internals.
 You can still get lucky for smaller problems (let us say a few hundred to thousands of variables) and obtain optimal
 solutions without having an idea of what is going on.
 The solvers can handle more and more 'bad' problem models effectively with every year.</p>
-<blockquote>
-<div><p><strong>Definition:</strong> A <em>model</em> in mathematical programming refers to a mathematical description of a problem, consisting of
+<div class="admonition-definition admonition">
+<p class="admonition-title"><strong>Definition:</strong></p>
+<p>A <em>model</em> in mathematical programming refers to a mathematical description of a problem, consisting of
 variables, constraints, and optionally an objective function that can be understood by the corresponding solver class.
 <em>Modelling</em> refers to transforming a problem (instance) into the corresponding framework, e.g.,
 by making all constraints linear as required for Mixed Integer Linear Programming.
 Be aware that the <a class="reference external" href="https://en.wikipedia.org/wiki/SAT_solver">SAT</a>-community uses the term <em>model</em> to refer to a (feasible)
 variable assignment, i.e., solution of a SAT-formula. If you struggle with this terminology, maybe you want to read
 this short guide on <a class="reference external" href="https://www.gurobi.com/resources/math-programming-modeling-basics/">Math Programming Modelling Basics</a>.</p>
-</div></blockquote>
+</div>
 <p>Our first problem has no deeper meaning, except of showing the basic workflow of creating the variables (x and y), adding the
 constraint x+y&lt;=30 on them, setting the objective function (maximize 30*x + 50*y), and obtaining a solution:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">ortools.sat.python</span> <span class="kn">import</span> <span class="n">cp_model</span>

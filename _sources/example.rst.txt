@@ -15,7 +15,9 @@ You can still get lucky for smaller problems (let us say a few hundred to thousa
 solutions without having an idea of what is going on.
 The solvers can handle more and more 'bad' problem models effectively with every year.
 
-   **Definition:** A *model* in mathematical programming refers to a mathematical description of a problem, consisting of
+.. admonition:: **Definition:**
+
+   A *model* in mathematical programming refers to a mathematical description of a problem, consisting of
    variables, constraints, and optionally an objective function that can be understood by the corresponding solver class.
    *Modelling* refers to transforming a problem (instance) into the corresponding framework, e.g.,
    by making all constraints linear as required for Mixed Integer Linear Programming.

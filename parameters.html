@@ -153,8 +153,9 @@ CP-SAT will stop as soon as the objective value(O) is within relative ratio
 </div>
 <p>Now we may want to stop after we didn't make progress for some time or whatever.
 In this case, we can make use of the solution callbacks.</p>
-<blockquote>
-<div><p>For those familiar with Gurobi: Unfortunately, we can only abort the solution
+<div class="admonition-for-those-familiar-with-gurobi admonition">
+<p class="admonition-title">For those familiar with Gurobi:</p>
+<p>Unfortunately, we can only abort the solution
 progress and not add lazy constraints or similar. For those not familiar with
 Gurobi or MIPs: With Mixed Integer Programming we can adapt the model during
 the solution process via callbacks which allows us to solve problems with
@@ -162,7 +163,7 @@ many(!) constraints by only adding them lazily. This is currently the biggest
 shortcoming of CP-SAT for me. Sometimes you can still do dynamic model
 building with only little overhead feeding information of previous iterations
 into the model</p>
-</div></blockquote>
+</div>
 <p>For adding a solution callback, we have to inherit from a base class. The
 documentation of the base class and the available operations can be found in the
 <a class="reference external" href="https://developers.google.com/optimization/reference/python/sat/python/cp_model#cp_model.CpSolverSolutionCallback">documentation</a>.</p>
@@ -511,19 +512,19 @@ assignments.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">CHOOSE_MAX_DOMAIN_SIZE</span></code>: the variable the has the most feasible assignments.</p></li>
 </ul>
 <p>For the value/domain strategy, we have the options:</p>
-<ul>
+<ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">SELECT_MIN_VALUE</span></code>: try to assign the smallest value.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">SELECT_MAX_VALUE</span></code>: try to assign the largest value.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">SELECT_LOWER_HALF</span></code>: branch to the lower half.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">SELECT_UPPER_HALF</span></code>: branch to the upper half.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">SELECT_MEDIAN_VALUE</span></code>: try to assign the median value.</p>
-<blockquote>
-<div><p><strong>CAVEAT:</strong> In the documentation there is a warning about the completeness of
+<li><p><code class="docutils literal notranslate"><span class="pre">SELECT_MEDIAN_VALUE</span></code>: try to assign the median value.</p></li>
+</ul>
+<div class="admonition-caveat admonition">
+<p class="admonition-title"><strong>CAVEAT:</strong></p>
+<p>In the documentation there is a warning about the completeness of
 the domain strategy. I am not sure, if this is just for custom strategies or
 you have to be careful in general. So be warned.</p>
-</div></blockquote>
-</li>
-</ul>
+</div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">model</span><span class="o">.</span><span class="n">AddDecisionStrategy</span><span class="p">([</span><span class="n">x</span><span class="p">],</span> <span class="n">cp_model</span><span class="o">.</span><span class="n">CHOOSE_FIRST</span><span class="p">,</span> <span class="n">cp_model</span><span class="o">.</span><span class="n">SELECT_MIN_VALUE</span><span class="p">)</span>
 
 <span class="c1"># your can force CP-SAT to follow this strategy exactly</span>
@@ -535,7 +536,7 @@ integer representation of the color), we could order the variables by decreasing
 neighborhood size (<code class="docutils literal notranslate"><span class="pre">CHOOSE_FIRST</span></code>) and then always try to assign the lowest
 color (<code class="docutils literal notranslate"><span class="pre">SELECT_MIN_VALUE</span></code>). This strategy should perform an implicit
 kernelization, because if we need at least $k$ colors, the vertices with less
-than $k$ neighbors are trivial (and they would not be relevant for any
+than <span class="math notranslate nohighlight">\(k\)</span> neighbors are trivial (and they would not be relevant for any
 conflict). Thus, by putting them at the end of the list, CP-SAT will only
 consider them once the vertices with higher degree could be colored without any
 conflict (and then the vertices with lower degree will, too). Another strategy
