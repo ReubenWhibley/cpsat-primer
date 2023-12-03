@@ -535,7 +535,7 @@ you have to be careful in general. So be warned.</p>
 integer representation of the color), we could order the variables by decreasing
 neighborhood size (<code class="docutils literal notranslate"><span class="pre">CHOOSE_FIRST</span></code>) and then always try to assign the lowest
 color (<code class="docutils literal notranslate"><span class="pre">SELECT_MIN_VALUE</span></code>). This strategy should perform an implicit
-kernelization, because if we need at least $k$ colors, the vertices with less
+kernelization, because if we need at least <span class="math notranslate nohighlight">\(k\)</span> colors, the vertices with less
 than <span class="math notranslate nohighlight">\(k\)</span> neighbors are trivial (and they would not be relevant for any
 conflict). Thus, by putting them at the end of the list, CP-SAT will only
 consider them once the vertices with higher degree could be colored without any
