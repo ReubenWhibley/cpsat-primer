@@ -52,7 +52,7 @@ After that (or if you are already familiar with combinatorial optimization), the
 6. **Benchmarking your Model**: How to benchmark your model and how to interpret the results.
 7. **Large neighborhood search**: The use of CP-SAT to create more powerful heuristics.
 
-**Target audience**: 
+.. admonition:: **Target audience**: 
 
   People (especially my students at TU Braunschweig) with some background
   in `integer programming <https://en.wikipedia.org/wiki/Integer_programming>`_
@@ -62,7 +62,7 @@ After that (or if you are already familiar with combinatorial optimization), the
   in `combinatorial optimization <https://en.wikipedia.org/wiki/Combinatorial_optimization>`_.
   
 
-**About the (main) author**:
+.. admonition:: **About the (main) author**:
 
   `Dr. Dominik Krupke <https://krupke.cc>`_ is a postdoctoral researcher at the `Algorithms Group <https://www.ibr.cs.tu-bs.de/alg>`_ at TU Braunschweig,
   where he researches and teaches on how to solve NP-hard problems in practice. He started writing this primer as course material for his students,
@@ -143,7 +143,9 @@ You can still get lucky for smaller problems (let us say a few hundred to thousa
 solutions without having an idea of what is going on.
 The solvers can handle more and more 'bad' problem models effectively with every year.
 
-   **Definition:** A *model* in mathematical programming refers to a mathematical description of a problem, consisting of
+.. admonition:: **Definition:**
+
+   A *model* in mathematical programming refers to a mathematical description of a problem, consisting of
    variables, constraints, and optionally an objective function that can be understood by the corresponding solver class.
    *Modelling* refers to transforming a problem (instance) into the corresponding framework, e.g.,
    by making all constraints linear as required for Mixed Integer Linear Programming.
@@ -1042,7 +1044,9 @@ CP-SAT will stop as soon as the objective value(O) is within relative ratio
 Now we may want to stop after we didn't make progress for some time or whatever.
 In this case, we can make use of the solution callbacks.
 
-    For those familiar with Gurobi: Unfortunately, we can only abort the solution
+.. admonition::  For those familiar with Gurobi:
+
+    Unfortunately, we can only abort the solution
     progress and not add lazy constraints or similar. For those not familiar with
     Gurobi or MIPs: With Mixed Integer Programming we can adapt the model during
     the solution process via callbacks which allows us to solve problems with
@@ -1432,7 +1436,9 @@ For the value/domain strategy, we have the options:
 - ``SELECT_UPPER_HALF``: branch to the upper half.
 - ``SELECT_MEDIAN_VALUE``: try to assign the median value.
 
-    **CAVEAT:** In the documentation there is a warning about the completeness of
+.. admonition:: **CAVEAT:** 
+
+    In the documentation there is a warning about the completeness of
     the domain strategy. I am not sure, if this is just for custom strategies or
     you have to be careful in general. So be warned.
 
@@ -1448,7 +1454,7 @@ integer representation of the color), we could order the variables by decreasing
 neighborhood size (``CHOOSE_FIRST``) and then always try to assign the lowest
 color (``SELECT_MIN_VALUE``). This strategy should perform an implicit
 kernelization, because if we need at least $k$ colors, the vertices with less
-than $k$ neighbors are trivial (and they would not be relevant for any
+than :math:`k`` neighbors are trivial (and they would not be relevant for any
 conflict). Thus, by putting them at the end of the list, CP-SAT will only
 consider them once the vertices with higher degree could be colored without any
 conflict (and then the vertices with lower degree will, too). Another strategy

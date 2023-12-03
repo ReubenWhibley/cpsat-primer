@@ -69,8 +69,8 @@ After that (or if you are already familiar with combinatorial optimization), the
 6. :doc:`benchmarking-your-model`: How to benchmark your model and how to interpret the results.  
 7. :doc:`large-neighborhood-search`: The use of CP-SAT to create more powerful heuristics.
 
-**Target audience**:
-   
+.. admonition:: **Target audience**:
+
    People (especially my students at TU Braunschweig) with some background
    in `integer programming <https://en.wikipedia.org/wiki/Integer_programming>`_
    / `linear optimization <https://en.wikipedia.org/wiki/Linear_programming>`_, who would like to know an actual viable
@@ -78,7 +78,7 @@ After that (or if you are already familiar with combinatorial optimization), the
    understandable for anyone interested
    in `combinatorial optimization <https://en.wikipedia.org/wiki/Combinatorial_optimization>`_.
 
-**About the (main) author**:
+.. admonition:: **About the (main) author**:
 
   `Dr. Dominik Krupke <https://krupke.cc>`_ is a postdoctoral researcher at the `Algorithms Group <https://www.ibr.cs.tu-bs.de/alg>`_ at TU Braunschweig,
   where he researches and teaches on how to solve NP-hard problems in practice. He started writing this primer as course material for his students,
