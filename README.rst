@@ -1453,8 +1453,8 @@ For example for `coloring <https://en.wikipedia.org/wiki/Graph_coloring>`_ (with
 integer representation of the color), we could order the variables by decreasing
 neighborhood size (``CHOOSE_FIRST``) and then always try to assign the lowest
 color (``SELECT_MIN_VALUE``). This strategy should perform an implicit
-kernelization, because if we need at least $k$ colors, the vertices with less
-than :math:`k`` neighbors are trivial (and they would not be relevant for any
+kernelization, because if we need at least :math:`k` colors, the vertices with less
+than :math:`k` neighbors are trivial (and they would not be relevant for any
 conflict). Thus, by putting them at the end of the list, CP-SAT will only
 consider them once the vertices with higher degree could be colored without any
 conflict (and then the vertices with lower degree will, too). Another strategy
