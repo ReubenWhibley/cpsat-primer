@@ -18,7 +18,7 @@ I will give you the most important right below.
     improve your model of the optimization problem.
 
 Time limit and Status
-~~~~~~~~~~~~~~~~~~~~~
+---------------------
 
 If we have a huge model, CP-SAT may not be able to solve it to optimality (if
 the constraints are not too difficult, there is a good chance we still get a
@@ -71,7 +71,7 @@ parameters ``absolute_gap_limit`` and ``relative_gap_limit``. The absolute limit
 tells CP-SAT to stop as soon as the solution is at most a specific value apart
 to the bound, the relative limit is relative to the bound. More specifically,
 CP-SAT will stop as soon as the objective value(O) is within relative ratio
-$abs(O - B) / max(1, abs(O))$ of the bound (B). To stop as soon as we are within
+:math:`abs(O - B) / max(1, abs(O))` of the bound (B). To stop as soon as we are within
 5% of the optimum, we could state (TODO: Check)
 
 .. code:: python
@@ -121,7 +121,8 @@ itself, and the best known bound, you can also find out about internals such as
 values mean will be discussed later.
 
 Parallelization
-~~~~~~~~~~~~~~~
+---------------
+
 CP-SAT has some basic parallelization. It can be considered a portfolio-strategy
 with some minimal data exchange between the threads. The basic idea is to use
 different techniques and may the best fitting one win (as an experienced
@@ -186,7 +187,7 @@ this).
 `CP-SAT also has different parallelization tiers based on the number of workers <https://github.com/google/or-tools/blob/main/ortools/sat/docs/troubleshooting.md#improving-performance-with-multiple-workers>`_.
 
 Assumptions
-~~~~~~~~~~~
+-----------
 
 Quite often you want to find out what happens if you force some variables to a
 specific value. Because you possibly want to do that multiple times, you do not
@@ -215,7 +216,7 @@ the variables. Need to check that.).
     by CP-SAT) and does not harm the learned clauses (but can reuse them).
 
 Hints
-~~~~~
+-----
 
 Maybe we already have a good intuition on how the solution will look like (this
 could be, because we already solved a similar model, have a good heuristic,
@@ -247,7 +248,7 @@ tell you about it.
 (TODO: Have not tested this, yet)
 
 Logging
-~~~~~~~
+-------
 Sometimes it is useful to activate logging to see what is going on. This can be
 achieved by setting the following two parameters.
 
@@ -439,7 +440,7 @@ lower and upper bounds the most. We take a more detailed look onto the log
 `here <https://github.com/d-krupke/cpsat-primer/blob/main/understanding_the_log.md>`_.
 
 Decision Strategy
-~~~~~~~~~~~~~~~~~
+-----------------
 
 In the end of this section, a more advanced parameter that looks interesting for
 advanced users as it gives some insights into the search algorithm, **but is
@@ -502,4 +503,4 @@ some conflicts.
     advantage for a bad model and after improving the model by symmetry breaking,
     it performed worse. Further, I assume that CP-SAT can learn the best strategy
     (Gurobi does such a thing, too) much better dynamically on its own.
-    
+

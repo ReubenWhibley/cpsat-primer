@@ -146,7 +146,7 @@ parameters <code class="docutils literal notranslate"><span class="pre">absolute
 tells CP-SAT to stop as soon as the solution is at most a specific value apart
 to the bound, the relative limit is relative to the bound. More specifically,
 CP-SAT will stop as soon as the objective value(O) is within relative ratio
-$abs(O - B) / max(1, abs(O))$ of the bound (B). To stop as soon as we are within
+<span class="math notranslate nohighlight">\(abs(O - B) / max(1, abs(O))\)</span> of the bound (B). To stop as soon as we are within
 5% of the optimum, we could state (TODO: Check)</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">solver</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">relative_gap_limit</span> <span class="o">=</span> <span class="mf">0.05</span>
 </pre></div>
