@@ -1032,7 +1032,7 @@ parameters ``absolute_gap_limit`` and ``relative_gap_limit``. The absolute limit
 tells CP-SAT to stop as soon as the solution is at most a specific value apart
 to the bound, the relative limit is relative to the bound. More specifically,
 CP-SAT will stop as soon as the objective value(O) is within relative ratio
-$abs(O - B) / max(1, abs(O))$ of the bound (B). To stop as soon as we are within
+:math:`abs(O - B) / max(1, abs(O))` of the bound (B). To stop as soon as we are within
 5% of the optimum, we could state (TODO: Check)
 
 .. code:: python
