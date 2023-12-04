@@ -1920,6 +1920,12 @@ expected exponential curves, you will get skewed sigmoidal curves. Consequently,
 such plots might not provide a clear understanding of the instance sizes your
 model is capable of handling efficiently.
 
+.. figure:: ./evaluations/tsp/2023-11-18_random_euclidean/PUBLIC_DATA/runtime.png
+   :align: center
+
+   The runtimes are sigmoidal instead of exponential because the time limit skews the results. The runtime can frequently exceed the time limit, because of expensive model building, etc. Thus, a pure runtime plot says surprisingly little (or is misleading) and can usually be discarded.
+
+
 Large neighborhood search
 -------------------------
 
