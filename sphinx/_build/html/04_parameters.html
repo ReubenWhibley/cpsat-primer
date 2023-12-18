@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="english" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Parameters &mdash; cp-sat primer 1.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=14667faf"></script>
+        <script src="_static/doctools.js?v=888ff710"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="How does it work?" href="05_how-does-it-work.html" />
+    <link rel="prev" title="Modelling" href="03_modelling.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            cp-sat primer
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="00_introduction.html">Using and Understanding ortools' CP-SAT: A Primer and Cheat Sheet</a></li>
+<li class="toctree-l1"><a class="reference internal" href="01_installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="02_example.html">Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="03_modelling.html">Modelling</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Parameters</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#time-limit-and-status">Time limit and Status</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#parallelization">Parallelization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#assumptions">Assumptions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#hints">Hints</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#logging">Logging</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#decision-strategy">Decision Strategy</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="05_how-does-it-work.html">How does it work?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="06_benchmarking-your-model.html">Benchmarking your Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="07_large-neighborhood-search.html">Using CP-SAT for Bigger Problems with Large Neighborhood Search</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">cp-sat primer</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Parameters</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/04_parameters.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="parameters">
+<h1>Parameters<a class="headerlink" href="#parameters" title="Link to this heading"></a></h1>
+<p>The CP-SAT solver has a lot of parameters to control its behavior. They are
+implemented via
+<a class="reference external" href="https://developers.google.com/protocol-buffers">Protocol Buffer</a> and can be
+manipulated via the <code class="docutils literal notranslate"><span class="pre">parameters</span></code>-member. If you want to find out all options,
+you can check the reasonably well documented <code class="docutils literal notranslate"><span class="pre">proto</span></code>-file in the
+<a class="reference external" href="https://github.com/google/or-tools/blob/stable/ortools/sat/sat_parameters.proto">official repository</a>.
+I will give you the most important right below.</p>
+<blockquote>
+<div><p>:warning: Only a few of the parameters (e.g., timelimit) are
+beginner-friendly. Most other parameters (e.g., decision strategies) should
+not be touched as the defaults are well-chosen, and it is likely that you will
+interfere with some optimizations. If you need a better performance, try to
+improve your model of the optimization problem.</p>
+</div></blockquote>
+<section id="time-limit-and-status">
+<h2>Time limit and Status<a class="headerlink" href="#time-limit-and-status" title="Link to this heading"></a></h2>
+<p>If we have a huge model, CP-SAT may not be able to solve it to optimality (if
+the constraints are not too difficult, there is a good chance we still get a
+good solution). Of course, we don't want CP-SAT to run endlessly for hours
+(years, decades,...) but simply abort after a fixed time and return us the best
+solution so far. If you are now asking yourself why you should use a tool that
+may run forever: There are simply no provably faster algorithms and considering
+the combinatorial complexity, it is incredible that it works so well. Those not
+familiar with the concepts of NP-hardness and combinatorial complexity, I
+recommend reading the book 'In Pursuit of the Traveling Salesman' by William
+Cook. Actually, I recommend this book to anyone into optimization: It is a
+beautiful and light weekend-read.</p>
+<p>To set a time limit (in seconds), we can simply set the following value before
+we run the solver:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">solver</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">max_time_in_seconds</span> <span class="o">=</span> <span class="mi">60</span>  <span class="c1"># 60s timelimit</span>
+</pre></div>
+</div>
+<p>We now of course have the problem, that maybe we won't have an optimal solution,
+or a solution at all, we can continue on. Thus, we need to check the status of
+the solver.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">status</span> <span class="o">=</span> <span class="n">solver</span><span class="o">.</span><span class="n">Solve</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+<span class="k">if</span> <span class="n">status</span> <span class="o">==</span> <span class="n">cp_model</span><span class="o">.</span><span class="n">OPTIMAL</span> <span class="ow">or</span> <span class="n">status</span> <span class="o">==</span> <span class="n">cp_model</span><span class="o">.</span><span class="n">FEASIBLE</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;We have a solution.&quot;</span><span class="p">)</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Help?! No solution available! :( &quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The following status codes are possible:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">OPTIMAL</span></code>: Perfect, we have an optimal solution.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">FEASIBLE</span></code>: Good, we have at least a feasible solution (we may also have a
+bound available to check the quality via <code class="docutils literal notranslate"><span class="pre">solver.BestObjectiveBound()</span></code>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">INFEASIBLE</span></code>: There is a proof that no solution can satisfy all our
+constraints.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">MODEL_INVALID</span></code>: You used CP-SAT wrongly.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">UNKNOWN</span></code>: No solution was found, but also no infeasibility proof. Thus, we
+actually know nothing. Maybe there is at least a bound available?</p></li>
+</ul>
+<p>If you want to print the status, you can use <code class="docutils literal notranslate"><span class="pre">solver.StatusName(status)</span></code>.</p>
+<p>We can not only limit the runtime but also tell CP-SAT, we are satisfied with a
+solution within a specific, provable quality range. For this, we can set the
+parameters <code class="docutils literal notranslate"><span class="pre">absolute_gap_limit</span></code> and <code class="docutils literal notranslate"><span class="pre">relative_gap_limit</span></code>. The absolute limit
+tells CP-SAT to stop as soon as the solution is at most a specific value apart
+to the bound, the relative limit is relative to the bound. More specifically,
+CP-SAT will stop as soon as the objective value(O) is within relative ratio
+$abs(O - B) / max(1, abs(O))$ of the bound (B). To stop as soon as we are within
+5% of the optimum, we could state (TODO: Check)</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">solver</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">relative_gap_limit</span> <span class="o">=</span> <span class="mf">0.05</span>
+</pre></div>
+</div>
+<p>Now we may want to stop after we didn't make progress for some time or whatever.
+In this case, we can make use of the solution callbacks.</p>
+<blockquote>
+<div><p>For those familiar with Gurobi: Unfortunately, we can only abort the solution
+progress and not add lazy constraints or similar. For those not familiar with
+Gurobi or MIPs: With Mixed Integer Programming we can adapt the model during
+the solution process via callbacks which allows us to solve problems with
+many(!) constraints by only adding them lazily. This is currently the biggest
+shortcoming of CP-SAT for me. Sometimes you can still do dynamic model
+building with only little overhead feeding information of previous iterations
+into the model</p>
+</div></blockquote>
+<p>For adding a solution callback, we have to inherit from a base class. The
+documentation of the base class and the available operations can be found in the
+<a class="reference external" href="https://developers.google.com/optimization/reference/python/sat/python/cp_model#cp_model.CpSolverSolutionCallback">documentation</a>.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">MySolutionCallback</span><span class="p">(</span><span class="n">cp_model</span><span class="o">.</span><span class="n">CpSolverSolutionCallback</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stuff</span><span class="p">):</span>
+        <span class="n">cp_model</span><span class="o">.</span><span class="n">CpSolverSolutionCallback</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">stuff</span> <span class="o">=</span> <span class="n">stuff</span>  <span class="c1"># just to show that we can save some data in the callback.</span>
+
+    <span class="k">def</span> <span class="nf">on_solution_callback</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">obj</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ObjectiveValue</span><span class="p">()</span>  <span class="c1"># best solution value</span>
+        <span class="n">bound</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">BestObjectiveBound</span><span class="p">()</span>  <span class="c1"># best bound</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The current value of x is </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">Value</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">obj</span> <span class="o">-</span> <span class="n">bound</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">10</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">StopSearch</span><span class="p">()</span>  <span class="c1"># abort search for better solution</span>
+        <span class="c1"># ...</span>
+
+
+<span class="n">solver</span><span class="o">.</span><span class="n">Solve</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">MySolutionCallback</span><span class="p">(</span><span class="kc">None</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>You can find an
+<a class="reference external" href="https://github.com/google/or-tools/blob/stable/ortools/sat/samples/stop_after_n_solutions_sample_sat.py">official example of using such callbacks</a>
+.</p>
+<p>Beside querying the objective value of the currently best solution, the solution
+itself, and the best known bound, you can also find out about internals such as
+<code class="docutils literal notranslate"><span class="pre">NumBooleans(self)</span></code>, <code class="docutils literal notranslate"><span class="pre">NumConflicts(self)</span></code>, <code class="docutils literal notranslate"><span class="pre">NumBranches(self)</span></code>. What those
+values mean will be discussed later.</p>
+</section>
+<section id="parallelization">
+<h2>Parallelization<a class="headerlink" href="#parallelization" title="Link to this heading"></a></h2>
+<p>CP-SAT has some basic parallelization. It can be considered a portfolio-strategy
+with some minimal data exchange between the threads. The basic idea is to use
+different techniques and may the best fitting one win (as an experienced
+optimizer, it can actually be very enlightening to see which technique
+contributed how much at which phase as visible in the logs).</p>
+<ol class="arabic simple">
+<li><p>The first thread performs the default search: The optimization problem is
+converted into a Boolean satisfiability problem and solved with a Variable
+State Independent Decaying Sum (VSIDS) algorithm. A search heuristic
+introduces additional literals for branching when needed, by selecting an
+integer variable, a value and a branching direction. The model also gets
+linearized to some degree, and the corresponding LP gets (partially) solved
+with the (dual) Simplex-algorithm to support the satisfiability model.</p></li>
+<li><p>The second thread uses a fixed search if a decision strategy has been
+specified. Otherwise, it tries to follow the LP-branching on the linearized
+model.</p></li>
+<li><p>The third thread uses Pseudo-Cost branching. This is a technique from mixed
+integer programming, where we branch on the variable that had the highest
+influence on the objective in prior branches. Of course, this only provides
+useful values after we have already performed some branches on the variable.</p></li>
+<li><p>The fourth thread is like the first thread but without linear relaxation.</p></li>
+<li><p>The fifth thread does the opposite and uses the default search but with
+maximal linear relaxation, i.e., also constraints that are more expensive to
+linearize are linearized. This can be computationally expensive but provides
+good lower bounds for some models.</p></li>
+<li><p>The sixth thread performs a core based search from the SAT- community. This
+approach extracts unsatisfiable cores of the formula and is good for finding
+lower bounds.</p></li>
+<li><p>All further threads perform a Large Neighborhood Search (LNS) for obtaining
+good solutions.</p></li>
+</ol>
+<p>Note that this information may no longer be completely accurate (if it ever
+was). To set the number of used cores/workers, simply do:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">solver</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">num_search_workers</span> <span class="o">=</span> <span class="mi">8</span>  <span class="c1"># use 8 cores</span>
+</pre></div>
+</div>
+<p>If you want to use more LNS-worker, you can specify
+<code class="docutils literal notranslate"><span class="pre">solver.parameters.min_num_lns_workers</span></code> (default 2). You can also specify how
+the different cores should be used by configuring/reordering.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">solver</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">subsolvers</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;default_lp&quot;</span><span class="p">,</span> <span class="s2">&quot;fixed&quot;</span><span class="p">,</span> <span class="s2">&quot;less_encoding&quot;</span><span class="p">,</span> <span class="s2">&quot;no_lp&quot;</span><span class="p">,</span> <span class="s2">&quot;max_lp&quot;</span><span class="p">,</span> <span class="s2">&quot;pseudo_costs&quot;</span><span class="p">,</span> <span class="s2">&quot;reduced_costs&quot;</span><span class="p">,</span> <span class="s2">&quot;quick_restart&quot;</span><span class="p">,</span> <span class="s2">&quot;quick_restart_no_lp&quot;</span><span class="p">,</span> <span class="s2">&quot;lb_tree_search&quot;</span><span class="p">,</span> <span class="s2">&quot;probing&quot;</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>This can be interesting, e.g., if you are using CP-SAT especially because the
+linear relaxation is not useful (and the BnB-algorithm performing badly). There
+are even more options, but for these you can simply look into the
+<a class="reference external" href="https://github.com/google/or-tools/blob/49b6301e1e1e231d654d79b6032e79809868a70e/ortools/sat/sat_parameters.proto#L513">documentation</a>.
+Be aware that fine-tuning such a solver is not a simple task, and often you do
+more harm than good by tinkering around. However, I noticed that decreasing the
+number of search workers can actually improve the runtime for some problems.
+This indicates that at least selecting the right subsolvers that are best fitted
+for your problem can be worth a shot. For example <code class="docutils literal notranslate"><span class="pre">max_lp</span></code> is probably a waste
+of resources if you know that your model has a terrible linear relaxation. In
+this context I want to recommend having a look on some relaxed solutions when
+dealing with difficult problems to get a better understanding of which parts a
+solver may struggle with (use a linear programming solver, like Gurobi, for
+this).</p>
+<p><a class="reference external" href="https://github.com/google/or-tools/blob/main/ortools/sat/docs/troubleshooting.md#improving-performance-with-multiple-workers">CP-SAT also has different parallelization tiers based on the number of workers</a>.</p>
+</section>
+<section id="assumptions">
+<h2>Assumptions<a class="headerlink" href="#assumptions" title="Link to this heading"></a></h2>
+<p>Quite often you want to find out what happens if you force some variables to a
+specific value. Because you possibly want to do that multiple times, you do not
+want to copy the whole model. CP-SAT has a nice option of adding assumptions
+that you can clear afterwards, without needing to copy the object to test the
+next assumptions. This is a feature also known from many SAT-solvers and CP-SAT
+also only allows this feature for boolean literals. You cannot add any more
+complicated expressions here, but for boolean literals it seems to be pretty
+efficient. By adding some auxiliary boolean variables, you can also use this
+technique to play around with more complicated expressions without the need to
+copy the model. If you really need to temporarily add complex constraints, you
+may have to copy the model using <code class="docutils literal notranslate"><span class="pre">model.CopyFrom</span></code> (maybe you also need to copy
+the variables. Need to check that.).</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">model</span><span class="o">.</span><span class="n">AddAssumptions</span><span class="p">([</span><span class="n">b1</span><span class="p">,</span> <span class="n">b2</span><span class="o">.</span><span class="n">Not</span><span class="p">()])</span>  <span class="c1"># assume b1=True, b2=False</span>
+<span class="n">model</span><span class="o">.</span><span class="n">AddAssumption</span><span class="p">(</span><span class="n">b3</span><span class="p">)</span>  <span class="c1"># assume b3=True (single literal)</span>
+<span class="c1"># ... solve again and analyse ...</span>
+<span class="n">model</span><span class="o">.</span><span class="n">ClearAssumptions</span><span class="p">()</span>  <span class="c1"># clear all assumptions</span>
+</pre></div>
+</div>
+<blockquote>
+<div><p>An <strong>assumption</strong> is a temporary fixation of a boolean variable to true or
+false. It can be efficiently handled by a SAT-solver (and thus probably also
+by CP-SAT) and does not harm the learned clauses (but can reuse them).</p>
+</div></blockquote>
+</section>
+<section id="hints">
+<h2>Hints<a class="headerlink" href="#hints" title="Link to this heading"></a></h2>
+<p>Maybe we already have a good intuition on how the solution will look like (this
+could be, because we already solved a similar model, have a good heuristic,
+etc.). In this case it may be useful, to tell CP-SAT about it, so it can
+incorporate this knowledge into its search. For Mixed Integer Programming
+Solver, this often yields a visible boost, even with mediocre heuristic
+solutions. For CP-SAT I actually also encountered downgrades of the performance
+if the hints weren't great (but this may depend on the problem).</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">model</span><span class="o">.</span><span class="n">AddHint</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>  <span class="c1"># Tell CP-SAT that x will probably be 1</span>
+<span class="n">model</span><span class="o">.</span><span class="n">AddHint</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>  <span class="c1"># and y probably be 2.</span>
+</pre></div>
+</div>
+<p>You can also find
+<a class="reference external" href="https://github.com/google/or-tools/blob/stable/ortools/sat/samples/solution_hinting_sample_sat.py">an official example</a>.</p>
+<p>To make sure, your hints are actually correct, you can use the following
+parameters to make CP-SAT throw an error if your hints are wrong.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">solver</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">debug_crash_on_bad_hint</span> <span class="o">=</span> <span class="kc">True</span>
+</pre></div>
+</div>
+<p>If you have the feeling that your hints are not used, you may have made a
+logical error in your model or just have a bug in your code. This parameter will
+tell you about it.</p>
+<p>(TODO: Have not tested this, yet)</p>
+</section>
+<section id="logging">
+<h2>Logging<a class="headerlink" href="#logging" title="Link to this heading"></a></h2>
+<p>Sometimes it is useful to activate logging to see what is going on. This can be
+achieved by setting the following two parameters.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">solver</span> <span class="o">=</span> <span class="n">cp_model</span><span class="o">.</span><span class="n">CpSolver</span><span class="p">()</span>
+<span class="n">solver</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">log_search_progress</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="n">solver</span><span class="o">.</span><span class="n">log_callback</span> <span class="o">=</span> <span class="nb">print</span>  <span class="c1"># (str)-&gt;None</span>
+</pre></div>
+</div>
+<p>If you get a doubled output, remove the last line.</p>
+<p>The output can look as follows:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Starting</span> <span class="n">CP</span><span class="o">-</span><span class="n">SAT</span> <span class="n">solver</span> <span class="n">v9</span><span class="mf">.3.10497</span>
+<span class="n">Parameters</span><span class="p">:</span> <span class="n">log_search_progress</span><span class="p">:</span> <span class="n">true</span>
+<span class="n">Setting</span> <span class="n">number</span> <span class="n">of</span> <span class="n">workers</span> <span class="n">to</span> <span class="mi">16</span>
+
+<span class="n">Initial</span> <span class="n">optimization</span> <span class="n">model</span> <span class="s1">&#39;&#39;</span><span class="p">:</span>
+<span class="c1">#Variables: 290 (#ints:1 in objective)</span>
+  <span class="o">-</span> <span class="mi">290</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">17</span><span class="p">]</span>
+<span class="c1">#kAllDiff: 34</span>
+<span class="c1">#kLinMax: 1</span>
+<span class="c1">#kLinear2: 2312 (#complex_domain: 2312)</span>
+
+<span class="n">Starting</span> <span class="n">presolve</span> <span class="n">at</span> <span class="mf">0.00</span><span class="n">s</span>
+<span class="p">[</span><span class="n">ExtractEncodingFromLinear</span><span class="p">]</span> <span class="c1">#potential_supersets=0 #potential_subsets=0 #at_most_one_encodings=0 #exactly_one_encodings=0 #unique_terms=0 #multiple_terms=0 #literals=0 time=9.558e-06s</span>
+<span class="p">[</span><span class="n">Probing</span><span class="p">]</span> <span class="n">deterministic_time</span><span class="p">:</span> <span class="mf">0.053825</span> <span class="p">(</span><span class="n">limit</span><span class="p">:</span> <span class="mi">1</span><span class="p">)</span> <span class="n">wall_time</span><span class="p">:</span> <span class="mf">0.0947566</span> <span class="p">(</span><span class="mi">12427</span><span class="o">/</span><span class="mi">12427</span><span class="p">)</span>
+<span class="p">[</span><span class="n">Probing</span><span class="p">]</span>  <span class="o">-</span> <span class="n">new</span> <span class="n">integer</span> <span class="n">bounds</span><span class="p">:</span> <span class="mi">1</span>
+<span class="p">[</span><span class="n">Probing</span><span class="p">]</span>  <span class="o">-</span> <span class="n">new</span> <span class="n">binary</span> <span class="n">clause</span><span class="p">:</span> <span class="mi">9282</span>
+<span class="p">[</span><span class="n">DetectDuplicateConstraints</span><span class="p">]</span> <span class="c1">#duplicates=0 time=0.00993671s</span>
+<span class="p">[</span><span class="n">DetectDominatedLinearConstraints</span><span class="p">]</span> <span class="c1">#relevant_constraints=2312 #work_done=14118 #num_inclusions=0 #num_redundant=0 time=0.0013379s</span>
+<span class="p">[</span><span class="n">DetectOverlappingColumns</span><span class="p">]</span> <span class="c1">#processed_columns=0 #work_done=0 #nz_reduction=0 time=0.00176239s</span>
+<span class="p">[</span><span class="n">ProcessSetPPC</span><span class="p">]</span> <span class="c1">#relevant_constraints=612 #num_inclusions=0 work=29376 time=0.0022503s</span>
+<span class="p">[</span><span class="n">Probing</span><span class="p">]</span> <span class="n">deterministic_time</span><span class="p">:</span> <span class="mf">0.0444515</span> <span class="p">(</span><span class="n">limit</span><span class="p">:</span> <span class="mi">1</span><span class="p">)</span> <span class="n">wall_time</span><span class="p">:</span> <span class="mf">0.0820382</span> <span class="p">(</span><span class="mi">11849</span><span class="o">/</span><span class="mi">11849</span><span class="p">)</span>
+<span class="p">[</span><span class="n">Probing</span><span class="p">]</span>  <span class="o">-</span> <span class="n">new</span> <span class="n">binary</span> <span class="n">clause</span><span class="p">:</span> <span class="mi">9282</span>
+<span class="p">[</span><span class="n">DetectDuplicateConstraints</span><span class="p">]</span> <span class="c1">#duplicates=0 time=0.00786558s</span>
+<span class="p">[</span><span class="n">DetectDominatedLinearConstraints</span><span class="p">]</span> <span class="c1">#relevant_constraints=2312 #work_done=14118 #num_inclusions=0 #num_redundant=0 time=0.000688681s</span>
+<span class="p">[</span><span class="n">DetectOverlappingColumns</span><span class="p">]</span> <span class="c1">#processed_columns=0 #work_done=0 #nz_reduction=0 time=0.000992311s</span>
+<span class="p">[</span><span class="n">ProcessSetPPC</span><span class="p">]</span> <span class="c1">#relevant_constraints=612 #num_inclusions=0 work=29376 time=0.00121334s</span>
+
+<span class="n">Presolve</span> <span class="n">summary</span><span class="p">:</span>
+  <span class="o">-</span> <span class="mi">0</span> <span class="n">affine</span> <span class="n">relations</span> <span class="n">were</span> <span class="n">detected</span><span class="o">.</span>
+  <span class="o">-</span> <span class="n">rule</span> <span class="s1">&#39;all_diff: expanded&#39;</span> <span class="n">was</span> <span class="n">applied</span> <span class="mi">34</span> <span class="n">times</span><span class="o">.</span>
+  <span class="o">-</span> <span class="n">rule</span> <span class="s1">&#39;deductions: 10404 stored&#39;</span> <span class="n">was</span> <span class="n">applied</span> <span class="mi">1</span> <span class="n">time</span><span class="o">.</span>
+  <span class="o">-</span> <span class="n">rule</span> <span class="s1">&#39;linear: simplified rhs&#39;</span> <span class="n">was</span> <span class="n">applied</span> <span class="mi">7514</span> <span class="n">times</span><span class="o">.</span>
+  <span class="o">-</span> <span class="n">rule</span> <span class="s1">&#39;presolve: 0 unused variables removed.&#39;</span> <span class="n">was</span> <span class="n">applied</span> <span class="mi">1</span> <span class="n">time</span><span class="o">.</span>
+  <span class="o">-</span> <span class="n">rule</span> <span class="s1">&#39;presolve: iteration&#39;</span> <span class="n">was</span> <span class="n">applied</span> <span class="mi">2</span> <span class="n">times</span><span class="o">.</span>
+  <span class="o">-</span> <span class="n">rule</span> <span class="s1">&#39;variables: add encoding constraint&#39;</span> <span class="n">was</span> <span class="n">applied</span> <span class="mi">5202</span> <span class="n">times</span><span class="o">.</span>
+
+<span class="n">Presolved</span> <span class="n">optimization</span> <span class="n">model</span> <span class="s1">&#39;&#39;</span><span class="p">:</span>
+<span class="c1">#Variables: 5492 (#ints:1 in objective)</span>
+  <span class="o">-</span> <span class="mi">5202</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span>
+  <span class="o">-</span> <span class="mi">289</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">17</span><span class="p">]</span>
+  <span class="o">-</span> <span class="mi">1</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">17</span><span class="p">]</span>
+<span class="c1">#kAtMostOne: 612 (#literals: 9792)</span>
+<span class="c1">#kLinMax: 1</span>
+<span class="c1">#kLinear1: 10404 (#enforced: 10404)</span>
+<span class="c1">#kLinear2: 2312 (#complex_domain: 2312)</span>
+
+<span class="n">Preloading</span> <span class="n">model</span><span class="o">.</span>
+<span class="c1">#Bound   0.45s best:inf   next:[1,17]     initial_domain</span>
+
+<span class="n">Starting</span> <span class="n">Search</span> <span class="n">at</span> <span class="mf">0.47</span><span class="n">s</span> <span class="k">with</span> <span class="mi">16</span> <span class="n">workers</span><span class="o">.</span>
+<span class="mi">9</span> <span class="n">full</span> <span class="n">subsolvers</span><span class="p">:</span> <span class="p">[</span><span class="n">default_lp</span><span class="p">,</span> <span class="n">no_lp</span><span class="p">,</span> <span class="n">max_lp</span><span class="p">,</span> <span class="n">reduced_costs</span><span class="p">,</span> <span class="n">pseudo_costs</span><span class="p">,</span> <span class="n">quick_restart</span><span class="p">,</span> <span class="n">quick_restart_no_lp</span><span class="p">,</span> <span class="n">lb_tree_search</span><span class="p">,</span> <span class="n">probing</span><span class="p">]</span>
+<span class="n">Interleaved</span> <span class="n">subsolvers</span><span class="p">:</span> <span class="p">[</span><span class="n">feasibility_pump</span><span class="p">,</span> <span class="n">rnd_var_lns_default</span><span class="p">,</span> <span class="n">rnd_cst_lns_default</span><span class="p">,</span> <span class="n">graph_var_lns_default</span><span class="p">,</span> <span class="n">graph_cst_lns_default</span><span class="p">,</span> <span class="n">rins_lns_default</span><span class="p">,</span> <span class="n">rens_lns_default</span><span class="p">]</span>
+<span class="c1">#1       0.71s best:17    next:[1,16]     quick_restart_no_lp fixed_bools:0/11849</span>
+<span class="c1">#2       0.72s best:16    next:[1,15]     quick_restart_no_lp fixed_bools:289/11849</span>
+<span class="c1">#3       0.74s best:15    next:[1,14]     no_lp fixed_bools:867/11849</span>
+<span class="c1">#Bound   1.30s best:15    next:[8,14]     max_lp initial_propagation</span>
+<span class="c1">#Done    3.40s max_lp</span>
+<span class="c1">#Done    3.40s probing</span>
+
+<span class="n">Sub</span><span class="o">-</span><span class="n">solver</span> <span class="n">search</span> <span class="n">statistics</span><span class="p">:</span>
+  <span class="s1">&#39;max_lp&#39;</span><span class="p">:</span>
+     <span class="n">LP</span> <span class="n">statistics</span><span class="p">:</span>
+       <span class="n">final</span> <span class="n">dimension</span><span class="p">:</span> <span class="mi">2498</span> <span class="n">rows</span><span class="p">,</span> <span class="mi">5781</span> <span class="n">columns</span><span class="p">,</span> <span class="mi">106908</span> <span class="n">entries</span> <span class="k">with</span> <span class="n">magnitude</span> <span class="ow">in</span> <span class="p">[</span><span class="mf">6.155988e-02</span><span class="p">,</span> <span class="mf">1.000000e+00</span><span class="p">]</span>
+       <span class="n">total</span> <span class="n">number</span> <span class="n">of</span> <span class="n">simplex</span> <span class="n">iterations</span><span class="p">:</span> <span class="mi">3401</span>
+       <span class="n">num</span> <span class="n">solves</span><span class="p">:</span>
+         <span class="o">-</span> <span class="c1">#OPTIMAL: 6</span>
+         <span class="o">-</span> <span class="c1">#DUAL_UNBOUNDED: 1</span>
+         <span class="o">-</span> <span class="c1">#DUAL_FEASIBLE: 1</span>
+       <span class="n">managed</span> <span class="n">constraints</span><span class="p">:</span> <span class="mi">5882</span>
+       <span class="n">merged</span> <span class="n">constraints</span><span class="p">:</span> <span class="mi">3510</span>
+       <span class="n">coefficient</span> <span class="n">strenghtenings</span><span class="p">:</span> <span class="mi">19</span>
+       <span class="n">num</span> <span class="n">simplifications</span><span class="p">:</span> <span class="mi">1</span>
+       <span class="n">total</span> <span class="n">cuts</span> <span class="n">added</span><span class="p">:</span> <span class="mi">3534</span> <span class="p">(</span><span class="n">out</span> <span class="n">of</span> <span class="mi">4444</span> <span class="n">calls</span><span class="p">)</span>
+         <span class="o">-</span> <span class="s1">&#39;CG&#39;</span><span class="p">:</span> <span class="mi">1134</span>
+         <span class="o">-</span> <span class="s1">&#39;IB&#39;</span><span class="p">:</span> <span class="mi">150</span>
+         <span class="o">-</span> <span class="s1">&#39;MIR_1&#39;</span><span class="p">:</span> <span class="mi">558</span>
+         <span class="o">-</span> <span class="s1">&#39;MIR_2&#39;</span><span class="p">:</span> <span class="mi">647</span>
+         <span class="o">-</span> <span class="s1">&#39;MIR_3&#39;</span><span class="p">:</span> <span class="mi">490</span>
+         <span class="o">-</span> <span class="s1">&#39;MIR_4&#39;</span><span class="p">:</span> <span class="mi">37</span>
+         <span class="o">-</span> <span class="s1">&#39;MIR_5&#39;</span><span class="p">:</span> <span class="mi">60</span>
+         <span class="o">-</span> <span class="s1">&#39;MIR_6&#39;</span><span class="p">:</span> <span class="mi">20</span>
+         <span class="o">-</span> <span class="s1">&#39;ZERO_HALF&#39;</span><span class="p">:</span> <span class="mi">438</span>
+
+  <span class="s1">&#39;reduced_costs&#39;</span><span class="p">:</span>
+     <span class="n">LP</span> <span class="n">statistics</span><span class="p">:</span>
+       <span class="n">final</span> <span class="n">dimension</span><span class="p">:</span> <span class="mi">979</span> <span class="n">rows</span><span class="p">,</span> <span class="mi">5781</span> <span class="n">columns</span><span class="p">,</span> <span class="mi">6456</span> <span class="n">entries</span> <span class="k">with</span> <span class="n">magnitude</span> <span class="ow">in</span> <span class="p">[</span><span class="mf">3.333333e-01</span><span class="p">,</span> <span class="mf">1.000000e+00</span><span class="p">]</span>
+       <span class="n">total</span> <span class="n">number</span> <span class="n">of</span> <span class="n">simplex</span> <span class="n">iterations</span><span class="p">:</span> <span class="mi">1369</span>
+       <span class="n">num</span> <span class="n">solves</span><span class="p">:</span>
+         <span class="o">-</span> <span class="c1">#OPTIMAL: 15</span>
+         <span class="o">-</span> <span class="c1">#DUAL_FEASIBLE: 51</span>
+       <span class="n">managed</span> <span class="n">constraints</span><span class="p">:</span> <span class="mi">2962</span>
+       <span class="n">merged</span> <span class="n">constraints</span><span class="p">:</span> <span class="mi">2819</span>
+       <span class="n">shortened</span> <span class="n">constraints</span><span class="p">:</span> <span class="mi">1693</span>
+       <span class="n">coefficient</span> <span class="n">strenghtenings</span><span class="p">:</span> <span class="mi">675</span>
+       <span class="n">num</span> <span class="n">simplifications</span><span class="p">:</span> <span class="mi">1698</span>
+       <span class="n">total</span> <span class="n">cuts</span> <span class="n">added</span><span class="p">:</span> <span class="mi">614</span> <span class="p">(</span><span class="n">out</span> <span class="n">of</span> <span class="mi">833</span> <span class="n">calls</span><span class="p">)</span>
+         <span class="o">-</span> <span class="s1">&#39;CG&#39;</span><span class="p">:</span> <span class="mi">7</span>
+         <span class="o">-</span> <span class="s1">&#39;IB&#39;</span><span class="p">:</span> <span class="mi">439</span>
+         <span class="o">-</span> <span class="s1">&#39;LinMax&#39;</span><span class="p">:</span> <span class="mi">1</span>
+         <span class="o">-</span> <span class="s1">&#39;MIR_1&#39;</span><span class="p">:</span> <span class="mi">87</span>
+         <span class="o">-</span> <span class="s1">&#39;MIR_2&#39;</span><span class="p">:</span> <span class="mi">80</span>
+
+  <span class="s1">&#39;pseudo_costs&#39;</span><span class="p">:</span>
+     <span class="n">LP</span> <span class="n">statistics</span><span class="p">:</span>
+       <span class="n">final</span> <span class="n">dimension</span><span class="p">:</span> <span class="mi">929</span> <span class="n">rows</span><span class="p">,</span> <span class="mi">5781</span> <span class="n">columns</span><span class="p">,</span> <span class="mi">6580</span> <span class="n">entries</span> <span class="k">with</span> <span class="n">magnitude</span> <span class="ow">in</span> <span class="p">[</span><span class="mf">3.333333e-01</span><span class="p">,</span> <span class="mf">1.000000e+00</span><span class="p">]</span>
+       <span class="n">total</span> <span class="n">number</span> <span class="n">of</span> <span class="n">simplex</span> <span class="n">iterations</span><span class="p">:</span> <span class="mi">1174</span>
+       <span class="n">num</span> <span class="n">solves</span><span class="p">:</span>
+         <span class="o">-</span> <span class="c1">#OPTIMAL: 14</span>
+         <span class="o">-</span> <span class="c1">#DUAL_FEASIBLE: 33</span>
+       <span class="n">managed</span> <span class="n">constraints</span><span class="p">:</span> <span class="mi">2923</span>
+       <span class="n">merged</span> <span class="n">constraints</span><span class="p">:</span> <span class="mi">2810</span>
+       <span class="n">shortened</span> <span class="n">constraints</span><span class="p">:</span> <span class="mi">1695</span>
+       <span class="n">coefficient</span> <span class="n">strenghtenings</span><span class="p">:</span> <span class="mi">675</span>
+       <span class="n">num</span> <span class="n">simplifications</span><span class="p">:</span> <span class="mi">1698</span>
+       <span class="n">total</span> <span class="n">cuts</span> <span class="n">added</span><span class="p">:</span> <span class="mi">575</span> <span class="p">(</span><span class="n">out</span> <span class="n">of</span> <span class="mi">785</span> <span class="n">calls</span><span class="p">)</span>
+         <span class="o">-</span> <span class="s1">&#39;CG&#39;</span><span class="p">:</span> <span class="mi">5</span>
+         <span class="o">-</span> <span class="s1">&#39;IB&#39;</span><span class="p">:</span> <span class="mi">400</span>
+         <span class="o">-</span> <span class="s1">&#39;LinMax&#39;</span><span class="p">:</span> <span class="mi">1</span>
+         <span class="o">-</span> <span class="s1">&#39;MIR_1&#39;</span><span class="p">:</span> <span class="mi">87</span>
+         <span class="o">-</span> <span class="s1">&#39;MIR_2&#39;</span><span class="p">:</span> <span class="mi">82</span>
+
+  <span class="s1">&#39;lb_tree_search&#39;</span><span class="p">:</span>
+     <span class="n">LP</span> <span class="n">statistics</span><span class="p">:</span>
+       <span class="n">final</span> <span class="n">dimension</span><span class="p">:</span> <span class="mi">929</span> <span class="n">rows</span><span class="p">,</span> <span class="mi">5781</span> <span class="n">columns</span><span class="p">,</span> <span class="mi">6650</span> <span class="n">entries</span> <span class="k">with</span> <span class="n">magnitude</span> <span class="ow">in</span> <span class="p">[</span><span class="mf">3.333333e-01</span><span class="p">,</span> <span class="mf">1.000000e+00</span><span class="p">]</span>
+       <span class="n">total</span> <span class="n">number</span> <span class="n">of</span> <span class="n">simplex</span> <span class="n">iterations</span><span class="p">:</span> <span class="mi">1249</span>
+       <span class="n">num</span> <span class="n">solves</span><span class="p">:</span>
+         <span class="o">-</span> <span class="c1">#OPTIMAL: 16</span>
+         <span class="o">-</span> <span class="c1">#DUAL_FEASIBLE: 14</span>
+       <span class="n">managed</span> <span class="n">constraints</span><span class="p">:</span> <span class="mi">2924</span>
+       <span class="n">merged</span> <span class="n">constraints</span><span class="p">:</span> <span class="mi">2809</span>
+       <span class="n">shortened</span> <span class="n">constraints</span><span class="p">:</span> <span class="mi">1692</span>
+       <span class="n">coefficient</span> <span class="n">strenghtenings</span><span class="p">:</span> <span class="mi">675</span>
+       <span class="n">num</span> <span class="n">simplifications</span><span class="p">:</span> <span class="mi">1698</span>
+       <span class="n">total</span> <span class="n">cuts</span> <span class="n">added</span><span class="p">:</span> <span class="mi">576</span> <span class="p">(</span><span class="n">out</span> <span class="n">of</span> <span class="mi">785</span> <span class="n">calls</span><span class="p">)</span>
+         <span class="o">-</span> <span class="s1">&#39;CG&#39;</span><span class="p">:</span> <span class="mi">8</span>
+         <span class="o">-</span> <span class="s1">&#39;IB&#39;</span><span class="p">:</span> <span class="mi">400</span>
+         <span class="o">-</span> <span class="s1">&#39;LinMax&#39;</span><span class="p">:</span> <span class="mi">2</span>
+         <span class="o">-</span> <span class="s1">&#39;MIR_1&#39;</span><span class="p">:</span> <span class="mi">87</span>
+         <span class="o">-</span> <span class="s1">&#39;MIR_2&#39;</span><span class="p">:</span> <span class="mi">79</span>
+
+
+<span class="n">Solutions</span> <span class="n">found</span> <span class="n">per</span> <span class="n">subsolver</span><span class="p">:</span>
+  <span class="s1">&#39;no_lp&#39;</span><span class="p">:</span> <span class="mi">1</span>
+  <span class="s1">&#39;quick_restart_no_lp&#39;</span><span class="p">:</span> <span class="mi">2</span>
+
+<span class="n">Objective</span> <span class="n">bounds</span> <span class="n">found</span> <span class="n">per</span> <span class="n">subsolver</span><span class="p">:</span>
+  <span class="s1">&#39;initial_domain&#39;</span><span class="p">:</span> <span class="mi">1</span>
+  <span class="s1">&#39;max_lp&#39;</span><span class="p">:</span> <span class="mi">1</span>
+
+<span class="n">Improving</span> <span class="n">variable</span> <span class="n">bounds</span> <span class="n">shared</span> <span class="n">per</span> <span class="n">subsolver</span><span class="p">:</span>
+  <span class="s1">&#39;no_lp&#39;</span><span class="p">:</span> <span class="mi">579</span>
+  <span class="s1">&#39;quick_restart_no_lp&#39;</span><span class="p">:</span> <span class="mi">1159</span>
+
+<span class="n">CpSolverResponse</span> <span class="n">summary</span><span class="p">:</span>
+<span class="n">status</span><span class="p">:</span> <span class="n">OPTIMAL</span>
+<span class="n">objective</span><span class="p">:</span> <span class="mi">15</span>
+<span class="n">best_bound</span><span class="p">:</span> <span class="mi">15</span>
+<span class="n">booleans</span><span class="p">:</span> <span class="mi">12138</span>
+<span class="n">conflicts</span><span class="p">:</span> <span class="mi">0</span>
+<span class="n">branches</span><span class="p">:</span> <span class="mi">23947</span>
+<span class="n">propagations</span><span class="p">:</span> <span class="mi">408058</span>
+<span class="n">integer_propagations</span><span class="p">:</span> <span class="mi">317340</span>
+<span class="n">restarts</span><span class="p">:</span> <span class="mi">23698</span>
+<span class="n">lp_iterations</span><span class="p">:</span> <span class="mi">1174</span>
+<span class="n">walltime</span><span class="p">:</span> <span class="mf">3.5908</span>
+<span class="n">usertime</span><span class="p">:</span> <span class="mf">3.5908</span>
+<span class="n">deterministic_time</span><span class="p">:</span> <span class="mf">6.71917</span>
+<span class="n">gap_integral</span><span class="p">:</span> <span class="mf">11.2892</span>
+</pre></div>
+</div>
+<p>The log is actually very interesting to understand CP-SAT, but also to learn
+about the optimization problem at hand. It gives you a lot of details on, e.g.,
+how many variables could be directly removed or which techniques contributed to
+lower and upper bounds the most. We take a more detailed look onto the log
+<span class="xref myst">here</span>.</p>
+</section>
+<section id="decision-strategy">
+<h2>Decision Strategy<a class="headerlink" href="#decision-strategy" title="Link to this heading"></a></h2>
+<p>In the end of this section, a more advanced parameter that looks interesting for
+advanced users as it gives some insights into the search algorithm, <strong>but is
+probably better left alone</strong>.</p>
+<p>We can tell CP-SAT, how to branch (or make a decision) whenever it can no longer
+deduce anything via propagation. For this, we need to provide a list of the
+variables (order may be important for some strategies), define which variable
+should be selected next (fixed variables are automatically skipped), and define
+which value should be probed.</p>
+<p>We have the following options for variable selection:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">CHOOSE_FIRST</span></code>: the first not-fixed variable in the list.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">CHOOSE_LOWEST_MIN</span></code>: the variable that could (potentially) take the lowest
+value.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">CHOOSE_HIGHEST_MAX</span></code>: the variable that could (potentially) take the highest
+value.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">CHOOSE_MIN_DOMAIN_SIZE</span></code>: the variable that has the fewest feasible
+assignments.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">CHOOSE_MAX_DOMAIN_SIZE</span></code>: the variable the has the most feasible assignments.</p></li>
+</ul>
+<p>For the value/domain strategy, we have the options:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">SELECT_MIN_VALUE</span></code>: try to assign the smallest value.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">SELECT_MAX_VALUE</span></code>: try to assign the largest value.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">SELECT_LOWER_HALF</span></code>: branch to the lower half.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">SELECT_UPPER_HALF</span></code>: branch to the upper half.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">SELECT_MEDIAN_VALUE</span></code>: try to assign the median value.</p></li>
+</ul>
+<blockquote>
+<div><p><strong>CAVEAT:</strong> In the documentation there is a warning about the completeness of
+the domain strategy. I am not sure, if this is just for custom strategies or
+you have to be careful in general. So be warned.</p>
+</div></blockquote>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">model</span><span class="o">.</span><span class="n">AddDecisionStrategy</span><span class="p">([</span><span class="n">x</span><span class="p">],</span> <span class="n">cp_model</span><span class="o">.</span><span class="n">CHOOSE_FIRST</span><span class="p">,</span> <span class="n">cp_model</span><span class="o">.</span><span class="n">SELECT_MIN_VALUE</span><span class="p">)</span>
+
+<span class="c1"># your can force CP-SAT to follow this strategy exactly</span>
+<span class="n">solver</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">search_branching</span> <span class="o">=</span> <span class="n">cp_model</span><span class="o">.</span><span class="n">FIXED_SEARCH</span>
+</pre></div>
+</div>
+<p>For example for <a class="reference external" href="https://en.wikipedia.org/wiki/Graph_coloring">coloring</a> (with
+integer representation of the color), we could order the variables by decreasing
+neighborhood size (<code class="docutils literal notranslate"><span class="pre">CHOOSE_FIRST</span></code>) and then always try to assign the lowest
+color (<code class="docutils literal notranslate"><span class="pre">SELECT_MIN_VALUE</span></code>). This strategy should perform an implicit
+kernelization, because if we need at least $k$ colors, the vertices with less
+than $k$ neighbors are trivial (and they would not be relevant for any
+conflict). Thus, by putting them at the end of the list, CP-SAT will only
+consider them once the vertices with higher degree could be colored without any
+conflict (and then the vertices with lower degree will, too). Another strategy
+may be to use <code class="docutils literal notranslate"><span class="pre">CHOOSE_LOWEST_MIN</span></code> to always select the vertex that has the
+lowest color available. Whether this will actually help, has to be evaluated:
+CP-SAT will probably notice by itself which vertices are the critical ones after
+some conflicts.</p>
+<blockquote>
+<div><p>:warning: I played around a little with selecting a manual search strategy.
+But even for the coloring, where this may even seem smart, it only gave an
+advantage for a bad model and after improving the model by symmetry breaking,
+it performed worse. Further, I assume that CP-SAT can learn the best strategy
+(Gurobi does such a thing, too) much better dynamically on its own.</p>
+</div></blockquote>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="03_modelling.html" class="btn btn-neutral float-left" title="Modelling" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="05_how-does-it-work.html" class="btn btn-neutral float-right" title="How does it work?" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Dominik Krupke (TU Braunschweig, IBR, Algorithms Group).</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="english" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Installation &mdash; cp-sat primer 1.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=14667faf"></script>
+        <script src="_static/doctools.js?v=888ff710"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Example" href="02_example.html" />
+    <link rel="prev" title="Using and Understanding ortools&#39; CP-SAT: A Primer and Cheat Sheet" href="00_introduction.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            cp-sat primer
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="00_introduction.html">Using and Understanding ortools' CP-SAT: A Primer and Cheat Sheet</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#what-hardware-do-i-need">What hardware do I need?</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="02_example.html">Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="03_modelling.html">Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="04_parameters.html">Parameters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="05_how-does-it-work.html">How does it work?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="06_benchmarking-your-model.html">Benchmarking your Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="07_large-neighborhood-search.html">Using CP-SAT for Bigger Problems with Large Neighborhood Search</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">cp-sat primer</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Installation</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/01_installation.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="installation">
+<h1>Installation<a class="headerlink" href="#installation" title="Link to this heading"></a></h1>
+<p>We are using Python 3 in this primer and assume that you have a working Python 3
+installation as well as the basic knowledge to use it. There are also interfaces
+for other languages, but Python 3 is, in my opinion, the most convenient one, as
+the mathematical expressions in Python are very close to the mathematical
+notation (allowing you to spot mathematical errors much faster). Only for huge
+models, you may need to use a compiled language such as C++ due to performance
+issues. For smaller models, you will not notice any performance difference.</p>
+<p>The installation of CP-SAT, which is part of the ortools package, is very easy
+and can be done via Python's package manager
+<a class="reference external" href="https://pip.pypa.io/en/stable/">pip</a>.</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>pip3<span class="w"> </span>install<span class="w"> </span>-U<span class="w"> </span>ortools
+</pre></div>
+</div>
+<p>This command will also update an existing installation of ortools. As this tool
+is in active development, it is recommended to update it frequently. We actually
+encountered wrong behavior, i.e., bugs, in earlier versions that then have been
+fixed by updates (this was on some more advanced features, don't worry about
+correctness with basic usage).</p>
+<p>I personally like to use <a class="reference external" href="https://jupyter.org/">Jupyter Notebooks</a> for
+experimenting with CP-SAT.</p>
+<section id="what-hardware-do-i-need">
+<h2>What hardware do I need?<a class="headerlink" href="#what-hardware-do-i-need" title="Link to this heading"></a></h2>
+<p>It's important to note that for CP-SAT usage, you don't need the capabilities of
+a supercomputer. A standard laptop is often sufficient for solving many
+problems. The primary requirements are CPU power and memory bandwidth, with a
+GPU being unnecessary.</p>
+<p>In terms of CPU power, the key is balancing the number of cores with the
+performance of each individual core. CP-SAT leverages all available cores,
+implementing different strategies on each.
+<a class="reference external" href="https://github.com/google/or-tools/blob/main/ortools/sat/docs/troubleshooting.md#improving-performance-with-multiple-workers">Depending on the number of cores, CP-SAT will behave differently</a>.
+However, the effectiveness of these strategies can vary, and it's usually not
+apparent which one will be most effective. A higher single-core performance
+means that your primary strategy will operate more swiftly. I recommend a
+minimum of 4 cores and 16GB of RAM.</p>
+<p>While CP-SAT is quite efficient in terms of memory usage, the amount of
+available memory can still be a limiting factor in the size of problems you can
+tackle. When it came to setting up our lab for extensive benchmarking at TU
+Braunschweig, we faced a choice between desktop machines and more expensive
+workstations or servers. We chose desktop machines equipped with AMD Ryzen 9
+7900 CPUs (Intel would be equally suitable) and 96GB of DDR5 RAM, managed using
+Slurm. This decision was driven by the fact that the performance gains from
+higher-priced workstations or servers were relatively marginal compared to their
+significantly higher costs. When on the road, I am often still able to do stuff
+with my old Intel Macbook Pro from 2018 with an i7 and only 16GB of RAM, but
+large models will overwhelm it. My workstation at home with AMD Ryzen 7 5700X
+and 32GB of RAM on the other hand rarely has any problems with the models I am
+working on.</p>
+<p>For further guidance, consider the
+<a class="reference external" href="https://support.gurobi.com/hc/en-us/articles/8172407217041-What-hardware-should-I-select-when-running-Gurobi-">hardware recommendations for the Gurobi solver</a>,
+which are likely to be similar. Since we frequently use Gurobi in addition to
+CP-SAT, our hardware choices were also influenced by their recommendations.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="00_introduction.html" class="btn btn-neutral float-left" title="Using and Understanding ortools&#39; CP-SAT: A Primer and Cheat Sheet" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="02_example.html" class="btn btn-neutral float-right" title="Example" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Dominik Krupke (TU Braunschweig, IBR, Algorithms Group).</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

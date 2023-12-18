@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="english" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>&lt;no title&gt; &mdash; cp-sat primer 1.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=14667faf"></script>
+        <script src="_static/doctools.js?v=888ff710"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Using and Understanding ortools&#39; CP-SAT: A Primer and Cheat Sheet" href="00_introduction.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="#" class="icon icon-home">
+            cp-sat primer
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="00_introduction.html">Using and Understanding ortools' CP-SAT: A Primer and Cheat Sheet</a></li>
+<li class="toctree-l1"><a class="reference internal" href="01_installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="02_example.html">Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="03_modelling.html">Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="04_parameters.html">Parameters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="05_how-does-it-work.html">How does it work?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="06_benchmarking-your-model.html">Benchmarking your Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="07_large-neighborhood-search.html">Using CP-SAT for Bigger Problems with Large Neighborhood Search</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="#">cp-sat primer</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="#" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">&lt;no title&gt;</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/index.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="00_introduction.html">Using and Understanding ortools' CP-SAT: A Primer and Cheat Sheet</a></li>
+<li class="toctree-l1"><a class="reference internal" href="01_installation.html">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="01_installation.html#what-hardware-do-i-need">What hardware do I need?</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="02_example.html">Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="03_modelling.html">Modelling</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="03_modelling.html#variables">Variables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="03_modelling.html#objectives">Objectives</a></li>
+<li class="toctree-l2"><a class="reference internal" href="03_modelling.html#linear-constraints">Linear Constraints</a></li>
+<li class="toctree-l2"><a class="reference internal" href="03_modelling.html#logical-constraints-propositional-logic">Logical Constraints (Propositional Logic)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="03_modelling.html#conditional-constraints">Conditional Constraints</a></li>
+<li class="toctree-l2"><a class="reference internal" href="03_modelling.html#alldifferent">AllDifferent</a></li>
+<li class="toctree-l2"><a class="reference internal" href="03_modelling.html#absolute-values-and-max-min">Absolute Values and Max/Min</a></li>
+<li class="toctree-l2"><a class="reference internal" href="03_modelling.html#multiplication-and-modulo">Multiplication and Modulo</a></li>
+<li class="toctree-l2"><a class="reference internal" href="03_modelling.html#circuit-tour-constraints">Circuit/Tour-Constraints</a></li>
+<li class="toctree-l2"><a class="reference internal" href="03_modelling.html#array-operations">Array operations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="03_modelling.html#interval-variables-and-no-overlap-constraints">Interval Variables and No-Overlap Constraints</a></li>
+<li class="toctree-l2"><a class="reference internal" href="03_modelling.html#there-is-more">There is more</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="04_parameters.html">Parameters</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="04_parameters.html#time-limit-and-status">Time limit and Status</a></li>
+<li class="toctree-l2"><a class="reference internal" href="04_parameters.html#parallelization">Parallelization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="04_parameters.html#assumptions">Assumptions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="04_parameters.html#hints">Hints</a></li>
+<li class="toctree-l2"><a class="reference internal" href="04_parameters.html#logging">Logging</a></li>
+<li class="toctree-l2"><a class="reference internal" href="04_parameters.html#decision-strategy">Decision Strategy</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="05_how-does-it-work.html">How does it work?</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="05_how-does-it-work.html#what-happens-in-cp-sat-on-solve">What happens in CP-SAT on solve?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="05_how-does-it-work.html#the-use-of-linear-programming-techniques">The use of linear programming techniques</a></li>
+<li class="toctree-l2"><a class="reference internal" href="05_how-does-it-work.html#limitations-of-cp-sat">Limitations of CP-SAT</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="06_benchmarking-your-model.html">Benchmarking your Model</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="06_benchmarking-your-model.html#distinguishing-exploratory-and-workhorse-studies-in-benchmarking">Distinguishing Exploratory and Workhorse Studies in Benchmarking</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="06_benchmarking-your-model.html#exploratory-studies-foundation-building">Exploratory Studies: Foundation Building</a></li>
+<li class="toctree-l3"><a class="reference internal" href="06_benchmarking-your-model.html#workhorse-studies-conducting-in-depth-evaluations">Workhorse Studies: Conducting In-depth Evaluations</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="06_benchmarking-your-model.html#designing-a-robust-benchmark-for-effective-studies">Designing a Robust Benchmark for Effective Studies</a></li>
+<li class="toctree-l2"><a class="reference internal" href="06_benchmarking-your-model.html#efficiently-managing-your-benchmarks">Efficiently Managing Your Benchmarks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="06_benchmarking-your-model.html#analyzing-the-results">Analyzing the results</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="06_benchmarking-your-model.html#random-instances">Random Instances</a></li>
+<li class="toctree-l3"><a class="reference internal" href="06_benchmarking-your-model.html#tsplib">TSPLIB</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="06_benchmarking-your-model.html#conclusion">Conclusion</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="07_large-neighborhood-search.html">Using CP-SAT for Bigger Problems with Large Neighborhood Search</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="07_large-neighborhood-search.html#what-sets-large-neighborhood-search-apart">What Sets Large Neighborhood Search Apart?</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="07_large-neighborhood-search.html#example-1-knapsack">Example 1: Knapsack</a></li>
+<li class="toctree-l3"><a class="reference internal" href="07_large-neighborhood-search.html#example-2-different-neighborhoods-for-the-traveling-salesman-problem">Example 2: Different Neighborhoods for the Traveling Salesman Problem</a></li>
+<li class="toctree-l3"><a class="reference internal" href="07_large-neighborhood-search.html#multi-armed-bandit-exploration-vs-exploitation">Multi-Armed Bandit: Exploration vs. Exploitation</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="00_introduction.html" class="btn btn-neutral float-right" title="Using and Understanding ortools&#39; CP-SAT: A Primer and Cheat Sheet" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Dominik Krupke (TU Braunschweig, IBR, Algorithms Group).</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

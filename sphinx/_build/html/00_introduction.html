@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="english" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Using and Understanding ortools&#39; CP-SAT: A Primer and Cheat Sheet &mdash; cp-sat primer 1.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=14667faf"></script>
+        <script src="_static/doctools.js?v=888ff710"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Installation" href="01_installation.html" />
+    <link rel="prev" title="&lt;no title&gt;" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            cp-sat primer
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Using and Understanding ortools' CP-SAT: A Primer and Cheat Sheet</a></li>
+<li class="toctree-l1"><a class="reference internal" href="01_installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="02_example.html">Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="03_modelling.html">Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="04_parameters.html">Parameters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="05_how-does-it-work.html">How does it work?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="06_benchmarking-your-model.html">Benchmarking your Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="07_large-neighborhood-search.html">Using CP-SAT for Bigger Problems with Large Neighborhood Search</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">cp-sat primer</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Using and Understanding ortools' CP-SAT: A Primer and Cheat Sheet</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/00_introduction.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="using-and-understanding-ortools-cp-sat-a-primer-and-cheat-sheet">
+<h1>Using and Understanding ortools' CP-SAT: A Primer and Cheat Sheet<a class="headerlink" href="#using-and-understanding-ortools-cp-sat-a-primer-and-cheat-sheet" title="Link to this heading"></a></h1>
+<p><em>By Dominik Krupke, TU Braunschweig</em></p>
+<p><strong>This tutorial is under
+<a class="reference external" href="https://creativecommons.org/licenses/by/4.0/">CC-BY 4.0</a>. Smaller parts can be
+copied without any acknowledgement for non-commercial, educational purposes.
+Contributions are very welcome, even if it is just spell-checking.</strong></p>
+<blockquote>
+<div><p>:warning: <strong>You are reading a draft! Expect lots of mistakes (and please
+report them either as an issue or pull request :) )</strong></p>
+</div></blockquote>
+<p>Many <a class="reference external" href="https://en.wikipedia.org/wiki/NP-hardness">combinatorially difficult</a>
+optimization problems can, despite their proven theoretical hardness, be solved
+reasonably well in practice. The most successful approach is to use
+<a class="reference external" href="https://en.wikipedia.org/wiki/Integer_programming">Mixed Integer Linear Programming</a>
+(MIP) to model the problem and then use a solver to find a solution. The most
+successful solvers for MIPs are <a class="reference external" href="https://www.gurobi.com/">Gurobi</a> and
+<a class="reference external" href="https://www.ibm.com/analytics/cplex-optimizer">CPLEX</a>, which are both
+commercial and expensive (though, free for academics). There are also some open
+source solvers, but they are often not as powerful as the commercial ones.
+However, even when investing in such a solver, the underlying techniques
+(<a class="reference external" href="https://en.wikipedia.org/wiki/Branch_and_bound">Branch and Bound</a> &amp;
+<a class="reference external" href="https://en.wikipedia.org/wiki/Branch_and_cut">Cut</a> on
+<a class="reference external" href="https://en.wikipedia.org/wiki/Linear_programming_relaxation">Linear Relaxations</a>)
+struggle with some optimization problems, especially if the problem contains a
+lot of logical constraints that a solution has to satisfy. In this case, the
+<a class="reference external" href="https://en.wikipedia.org/wiki/Constraint_programming">Constraint Programming</a>
+(CP) approach may be more successful. For Constraint Programming, there are many
+open source solvers, but they are often not as powerful as the commercial
+MIP-solvers. While MIP-solvers are frequently able to solve problems with
+hundreds of thousands of variables and constraints, the classical CP-solvers
+often struggle with problems with more than a few thousand variables and
+constraints. However, the relatively new
+<a class="reference external" href="https://developers.google.com/optimization/cp/cp_solver">CP-SAT</a> of Google's
+<a class="reference external" href="https://github.com/google/or-tools/">ortools</a> suite shows to overcome many of
+the weaknesses and provides a viable alternative to MIP-solvers, being
+competitive for many problems and sometimes even superior.</p>
+<p>This unofficial primer shall help you use and understand this powerful tool,
+especially if you are coming from the
+<a class="reference external" href="https://en.wikipedia.org/wiki/Integer_programming">Mixed Integer Linear Programming</a>
+-community, as it may prove useful in cases where Branch and Bound performs
+poorly.</p>
+<p>If you are relatively new to combinatorial optimization, I suggest you to read
+the relatively short book
+<a class="reference external" href="https://press.princeton.edu/books/paperback/9780691163529/in-pursuit-of-the-traveling-salesman">In Pursuit of the Traveling Salesman by Bill Cook</a>
+first. It tells you a lot about the history and techniques to deal with
+combinatorial optimization problems, on the example of the famous
+<a class="reference external" href="https://en.wikipedia.org/wiki/Travelling_salesman_problem">Traveling Salesman Problem</a>.
+The Traveling Salesman Problem seems to be intractable already for small
+instances, but it is actually possible to solve instances with thousands of
+cities in practice. It is a very light read and you can skip the more technical
+parts if you want to. As an alternative, you can also read this
+<a class="reference external" href="https://www.math.uwaterloo.ca/~bico/papers/comp_chapter1.pdf">free chapter, coauthored by the same author</a>
+and watch this very amusing
+<a class="reference external" href="https://www.youtube.com/watch?v=5VjphFYQKj8">YouTube Video (1hour)</a>. If you are
+short on time, at least watch the video, it is really worth it. While CP-SAT
+follows a slightly different approach than the one described in the
+book/chapter/video, it is still important to see why it is possible to do the
+seemingly impossible and solve such problems in practice, despite their
+theoretical hardness. Additionally, you will have learned the concept of
+<a class="reference external" href="https://www.gurobi.com/resources/math-programming-modeling-basics/">Mathematical Programming</a>,
+and know that the term &quot;Programming&quot; has nothing to do with programming in the
+sense of writing code (otherwise, additionally read the just given reference).</p>
+<p>After that (or if you are already familiar with combinatorial optimization), the
+following content awaits you in this primer:</p>
+<p><strong>Content:</strong></p>
+<ol class="arabic simple">
+<li><p><a class="reference internal" href="#installation"><span class="xref myst">Installation</span></a>: Quick installation guide.</p></li>
+<li><p><a class="reference internal" href="#example"><span class="xref myst">Example</span></a>: A short example, showing the usage of CP-SAT.</p></li>
+<li><p><a class="reference internal" href="#modelling"><span class="xref myst">Modelling</span></a>: An overview of variables, objectives, and
+constraints. The constraints make the most important part.</p></li>
+<li><p><a class="reference internal" href="#parameters"><span class="xref myst">Parameters</span></a>: How to specify CP-SATs behavior, if needed.
+Timelimits, hints, assumptions, parallelization, ...</p></li>
+<li><p><a class="reference internal" href="#how-does-it-work"><span class="xref myst">How does it work?</span></a>: After we know what we can do with
+CP-SAT, we look into how CP-SAT will do all these things.</p></li>
+<li><p><a class="reference internal" href="#benchmarking-your-model"><span class="xref myst">Benchmarking your Model</span></a>: How to benchmark your
+model and how to interpret the results.</p></li>
+<li><p><a class="reference internal" href="#Using-CP-SAT-for-Bigger-Problems-with-Large-Neighborhood-Search"><span class="xref myst">Large Neighborhood Search</span></a>:
+The use of CP-SAT to create more powerful heuristics.</p></li>
+</ol>
+<blockquote>
+<div><p><strong>Target audience:</strong> People (especially my students at TU Braunschweig) with
+some background in
+<a class="reference external" href="https://en.wikipedia.org/wiki/Integer_programming">integer programming</a>
+/<a class="reference external" href="https://en.wikipedia.org/wiki/Linear_programming">linear optimization</a>, who
+would like to know an actual viable alternative to
+<a class="reference external" href="https://en.wikipedia.org/wiki/Branch_and_cut">Branch and Cut</a>. However, I try
+to make it understandable for anyone interested in
+<a class="reference external" href="https://en.wikipedia.org/wiki/Combinatorial_optimization">combinatorial optimization</a>.</p>
+</div></blockquote>
+<blockquote>
+<div><p><strong>About the (main) author:</strong>  <a class="reference external" href="https://krupke.cc">Dr. Dominik Krupke</a> is a
+postdoctoral researcher at the
+<a class="reference external" href="https://www.ibr.cs.tu-bs.de/alg">Algorithms Group</a> at TU Braunschweig, where
+he researches and teaches on how to solve NP-hard problems in practice. He
+started writing this primer as course material for his students, but continued
+and extended it (mostly in his spare time) to make it available to a wider
+audience.</p>
+</div></blockquote>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="&lt;no title&gt;" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="01_installation.html" class="btn btn-neutral float-right" title="Installation" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Dominik Krupke (TU Braunschweig, IBR, Algorithms Group).</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

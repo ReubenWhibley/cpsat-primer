@@ -1,0 +1,922 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="english" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Modelling &mdash; cp-sat primer 1.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=14667faf"></script>
+        <script src="_static/doctools.js?v=888ff710"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Parameters" href="04_parameters.html" />
+    <link rel="prev" title="Example" href="02_example.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            cp-sat primer
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="00_introduction.html">Using and Understanding ortools' CP-SAT: A Primer and Cheat Sheet</a></li>
+<li class="toctree-l1"><a class="reference internal" href="01_installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="02_example.html">Example</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Modelling</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#variables">Variables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#objectives">Objectives</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#linear-constraints">Linear Constraints</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#logical-constraints-propositional-logic">Logical Constraints (Propositional Logic)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#conditional-constraints">Conditional Constraints</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#alldifferent">AllDifferent</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#absolute-values-and-max-min">Absolute Values and Max/Min</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#multiplication-and-modulo">Multiplication and Modulo</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#circuit-tour-constraints">Circuit/Tour-Constraints</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#array-operations">Array operations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#interval-variables-and-no-overlap-constraints">Interval Variables and No-Overlap Constraints</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#there-is-more">There is more</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="04_parameters.html">Parameters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="05_how-does-it-work.html">How does it work?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="06_benchmarking-your-model.html">Benchmarking your Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="07_large-neighborhood-search.html">Using CP-SAT for Bigger Problems with Large Neighborhood Search</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">cp-sat primer</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Modelling</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/03_modelling.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="modelling">
+<h1>Modelling<a class="headerlink" href="#modelling" title="Link to this heading"></a></h1>
+<p>CP-SAT provides us with much more modelling options than the classical
+MIP-solver. Instead of just the classical linear constraints (&lt;=, ==, &gt;=), we
+have various advanced constraints such as <code class="docutils literal notranslate"><span class="pre">AllDifferent</span></code> or
+<code class="docutils literal notranslate"><span class="pre">AddMultiplicationEquality</span></code>. This spares you the burden of modelling the logic
+only with linear constraints, but also makes the interface more extensive.
+Additionally, you have to be aware that not all constraints are equally
+efficient. The most efficient constraints are linear or boolean constraints.
+Constraints such as <code class="docutils literal notranslate"><span class="pre">AddMultiplicationEquality</span></code> can be significantly(!!!) more
+expensive.</p>
+<blockquote>
+<div><p><strong>If you are coming from the MIP-world, you should not overgeneralize your
+experience</strong> to CP-SAT as the underlying techniques are different. It does not
+rely on the linear relaxation as much as MIP-solvers do. Thus, you can often
+use modelling techniques that are not efficient in MIP-solvers, but perform
+reasonably well in CP-SAT. For example, I had a model that required multiple
+absolute values and performed significantly better in CP-SAT than in Gurobi
+(despite a manual implementation with relatively tight big-M values).</p>
+</div></blockquote>
+<p>This primer does not have the space to teach about building good models. In the
+following, we will primarily look onto a selection of useful constraints. If you
+want to learn how to build models, you could take a look into the book
+<a class="reference external" href="https://www.wiley.com/en-us/Model+Building+in+Mathematical+Programming%2C+5th+Edition-p-9781118443330">Model Building in Mathematical Programming by H. Paul Williams</a>
+which covers much more than you probably need, including some actual
+applications. This book is of course not for CP-SAT, but the general techniques
+and ideas carry over. However, it can also suffice to simply look on some other
+models and try some things out. If you are completely new to this area, you may
+want to check out modelling for the MIP-solver Gurobi in this
+<a class="reference external" href="https://www.youtube.com/playlist?list=PLHiHZENG6W8CezJLx_cw9mNqpmviq3lO9">video course</a>.
+Remember that many things are similar to CP-SAT, but not everything (as already
+mentioned, CP-SAT is especially interesting for the cases where a MIP-solver
+fails).</p>
+<p>The following part does not cover all constraints. You can get a complete
+overview by looking into the
+<a class="reference external" href="https://developers.google.com/optimization/reference/python/sat/python/cp_model#cp_model.CpModel">official documentation</a>.
+Simply go to <code class="docutils literal notranslate"><span class="pre">CpModel</span></code> and check out the <code class="docutils literal notranslate"><span class="pre">AddXXX</span></code> and <code class="docutils literal notranslate"><span class="pre">NewXXX</span></code> methods.</p>
+<p>Resources on mathematical modelling (not CP-SAT specific):</p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://www.gurobi.com/resources/math-programming-modeling-basics/">Math Programming Modeling Basics by Gurobi</a>:
+Get the absolute basics.</p></li>
+<li><p><a class="reference external" href="https://www.youtube.com/playlist?list=PLHiHZENG6W8CezJLx_cw9mNqpmviq3lO9">Modeling with Gurobi Python</a>:
+A video course on modelling with Gurobi. The concepts carry over to CP-SAT.</p></li>
+<li><p><a class="reference external" href="https://www.wiley.com/en-us/Model+Building+in+Mathematical+Programming%2C+5th+Edition-p-9781118443330">Model Building in Mathematical Programming by H. Paul Williams</a>:
+A complete book on mathematical modelling.</p></li>
+</ul>
+<section id="variables">
+<h2>Variables<a class="headerlink" href="#variables" title="Link to this heading"></a></h2>
+<p>There are two important types of variables in CP-SAT: Booleans and Integers
+(which are actually converted to Booleans, but more on this later). There are
+also, e.g.,
+<a class="reference external" href="https://developers.google.com/optimization/reference/python/sat/python/cp_model#intervalvar">interval variables</a>,
+but they are not as important and can be modelled easily with integer variables.
+For the integer variables, you have to specify a lower and an upper bound.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># integer variable z with bounds -100 &lt;= z &lt;= 100</span>
+<span class="n">z</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">NewIntVar</span><span class="p">(</span><span class="o">-</span><span class="mi">100</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="s2">&quot;z&quot;</span><span class="p">)</span>
+<span class="c1"># boolean variable b</span>
+<span class="n">b</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">NewBoolVar</span><span class="p">(</span><span class="s2">&quot;b&quot;</span><span class="p">)</span>
+<span class="c1"># implicitly available negation of b:</span>
+<span class="n">not_b</span> <span class="o">=</span> <span class="n">b</span><span class="o">.</span><span class="n">Not</span><span class="p">()</span>  <span class="c1"># will be 1 if b is 0 and 0 if b is 1</span>
+</pre></div>
+</div>
+<blockquote>
+<div><p>Having tight bounds on the integer variables can make a huge impact on the
+performance. It may be useful to run some optimization heuristics beforehand
+to get some bounds. Reducing it by a few percent can already pay off for some
+problems.</p>
+</div></blockquote>
+<p>There are no continuous/floating point variables (or even constants) in CP-SAT:
+If you need floating point numbers, you have to approximate them with integers
+by some resolution. For example, you could simply multiply all values by 100 for
+a step size of 0.01. A value of 2.35 would then be represented by 235. This
+<em>could</em> probably be implemented in CP-SAT directly, but doing it explicitly is
+not difficult, and it has numerical implications that you should be aware of.</p>
+<p>The lack of continuous variables may sound like a serious limitation, especially
+if you have a background in linear optimization (where continuous variables are
+the &quot;easy part&quot;), but as long as they are not a huge part of your problem, you
+can often work around it. I had problems with many continuous variables on which
+I had to apply absolute values and conditional linear constraints, and CP-SAT
+performed much better than Gurobi, which is known to be very good at continuous
+variables. In this case, CP-SAT struggled less with the continuous variables
+(Gurobi's strength), than Gurobi with the logical constraints (CP-SAT's
+strength). In a further analysis, I noted an only logarithmic increase of the
+runtime with the resolution. However, there are also problems for which a higher
+resolution can drastically increase the runtime. The packing problem, which is
+discussed further below, has the following runtime for different resolutions:
+1x: 0.02s, 10x: 0.7s, 100x: 7.6s, 1000x: 75s, 10_000x: &gt;15min. The solution was
+always the same, just scaled, and there was no objective, i.e., only a feasible
+solution had to be found. Note that this is just an example, not a
+representative benchmark. See
+<a class="reference download internal" download="" href="_downloads/7ac36bd14dbd4910ffb67f98fb018f75/add_no_overlap_2d_scaling.ipynb"><span class="xref download myst">./examples/add_no_overlap_2d_scaling.ipynb</span></a>
+for the code. If you have a problem with a lot of continuous variables, such as
+<a class="reference external" href="https://en.wikipedia.org/wiki/Network_flow_problem">network flow problems</a>, you
+are probably better served with a MIP-solver.</p>
+<p>In my experience, boolean variables are by far the most important variables in
+many combinatorial optimization problems. Many problems, such as the famous
+Traveling Salesman Problem, only consist of boolean variables. Implementing a
+solver specialized on boolean variables by using a SAT-solver as a base, such as
+CP-SAT, thus, is quite sensible. The resolution of coefficients (in combination
+with boolean variables) is less critical than for variables.</p>
+<p>You might question the need for naming variables in your model. While it's true
+that CP-SAT wouldn't need named variables to work (as it could just give them
+automatically generated names), assigning names is incredibly useful for
+debugging purposes. Solver APIs often create an internal representation of your
+model, which is subsequently used by the solver. There are instances where you
+might need to examine this internal model, such as when debugging issues like
+infeasibility. In such scenarios, having named variables can significantly
+enhance the clarity of the internal representation, making your debugging
+process much more manageable.</p>
+</section>
+<section id="objectives">
+<h2>Objectives<a class="headerlink" href="#objectives" title="Link to this heading"></a></h2>
+<p>Not every problem actually has an objective, sometimes you only need to find a
+feasible solution. CP-SAT is pretty good at doing that (MIP-solvers are often
+not). However, CP-SAT can also optimize pretty well (older constraint
+programming solver cannot, at least in my experience). You can minimize or
+maximize a linear expression (use auxiliary variables and constraints to model
+more complicated expressions).</p>
+<p>You can specify the objective function by calling <code class="docutils literal notranslate"><span class="pre">model.Minimize</span></code> or
+<code class="docutils literal notranslate"><span class="pre">model.Maximize</span></code> with a linear expression.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">model</span><span class="o">.</span><span class="n">Maximize</span><span class="p">(</span><span class="mi">30</span> <span class="o">*</span> <span class="n">x</span> <span class="o">+</span> <span class="mi">50</span> <span class="o">*</span> <span class="n">y</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Let us look on how to model more complicated expressions, using boolean
+variables and generators.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">x_vars</span> <span class="o">=</span> <span class="p">[</span><span class="n">model</span><span class="o">.</span><span class="n">NewBoolVar</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;x</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">)]</span>
+<span class="n">model</span><span class="o">.</span><span class="n">Minimize</span><span class="p">(</span>
+    <span class="nb">sum</span><span class="p">(</span><span class="n">i</span> <span class="o">*</span> <span class="n">x_vars</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">if</span> <span class="n">i</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">else</span> <span class="n">i</span> <span class="o">*</span> <span class="n">x_vars</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">Not</span><span class="p">()</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">))</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>This objective evaluates to</p>
+<div class="highlight-math notranslate"><div class="highlight"><pre><span></span>\min \sum_{i=0}^{9} i\cdot x_i \text{ if } i \text{ is even else } i\cdot \neg x_i
+</pre></div>
+</div>
+<p>To implement a
+<a class="reference external" href="https://en.wikipedia.org/wiki/Lexicographic_optimization">lexicographic optimization</a>,
+you can do multiple rounds and always fix the previous objective as constraint.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">model</span><span class="o">.</span><span class="n">Maximize</span><span class="p">(</span><span class="mi">30</span> <span class="o">*</span> <span class="n">x</span> <span class="o">+</span> <span class="mi">50</span> <span class="o">*</span> <span class="n">y</span><span class="p">)</span>
+
+<span class="c1"># Lexicographic</span>
+<span class="n">solver</span><span class="o">.</span><span class="n">Solve</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+<span class="n">model</span><span class="o">.</span><span class="n">Add</span><span class="p">(</span><span class="mi">30</span> <span class="o">*</span> <span class="n">x</span> <span class="o">+</span> <span class="mi">50</span> <span class="o">*</span> <span class="n">y</span> <span class="o">==</span> <span class="nb">int</span><span class="p">(</span><span class="n">solver</span><span class="o">.</span><span class="n">ObjectiveValue</span><span class="p">()))</span>  <span class="c1"># fix previous objective</span>
+<span class="n">model</span><span class="o">.</span><span class="n">Minimize</span><span class="p">(</span><span class="n">z</span><span class="p">)</span>  <span class="c1"># optimize for second objective</span>
+<span class="n">solver</span><span class="o">.</span><span class="n">Solve</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>To implement non-linear objectives, you can use auxiliary variables and
+constraints. For example, you can create a variable that is the absolute value
+of another variable and then use this variable in the objective.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">abs_x</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">NewIntVar</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="s2">&quot;|x|&quot;</span><span class="p">)</span>
+<span class="n">model</span><span class="o">.</span><span class="n">AddAbsEquality</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">abs_x</span><span class="p">,</span> <span class="n">expr</span><span class="o">=</span><span class="n">x</span><span class="p">)</span>
+<span class="n">model</span><span class="o">.</span><span class="n">Minimize</span><span class="p">(</span><span class="n">abs_x</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The available constraints are discussed next.</p>
+</section>
+<section id="linear-constraints">
+<h2>Linear Constraints<a class="headerlink" href="#linear-constraints" title="Link to this heading"></a></h2>
+<p>These are the classical constraints also used in linear optimization. Remember
+that you are still not allowed to use floating point numbers within it. Same as
+for linear optimization: You are not allowed to multiply a variable with
+anything else than a constant and also not to apply any further mathematical
+operations.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">model</span><span class="o">.</span><span class="n">Add</span><span class="p">(</span><span class="mi">10</span> <span class="o">*</span> <span class="n">x</span> <span class="o">+</span> <span class="mi">15</span> <span class="o">*</span> <span class="n">y</span> <span class="o">&lt;=</span> <span class="mi">10</span><span class="p">)</span>
+<span class="n">model</span><span class="o">.</span><span class="n">Add</span><span class="p">(</span><span class="n">x</span> <span class="o">+</span> <span class="n">z</span> <span class="o">==</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">y</span><span class="p">)</span>
+
+<span class="c1"># This one actually isn&#39;t linear but still works.</span>
+<span class="n">model</span><span class="o">.</span><span class="n">Add</span><span class="p">(</span><span class="n">x</span> <span class="o">+</span> <span class="n">y</span> <span class="o">!=</span> <span class="n">z</span><span class="p">)</span>
+
+<span class="c1"># For &lt;, &gt; you can simply use &lt;= and -1 because we are working on integers.</span>
+<span class="n">model</span><span class="o">.</span><span class="n">Add</span><span class="p">(</span><span class="n">x</span> <span class="o">&lt;=</span> <span class="n">z</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>  <span class="c1"># x &lt; z</span>
+</pre></div>
+</div>
+<p>Note that <code class="docutils literal notranslate"><span class="pre">!=</span></code> can be expected slower than the other (<code class="docutils literal notranslate"><span class="pre">&lt;=</span></code>, <code class="docutils literal notranslate"><span class="pre">&gt;=</span></code>, <code class="docutils literal notranslate"><span class="pre">==</span></code>)
+constraints, because it is not a linear constraint. If you have a set of
+mutually <code class="docutils literal notranslate"><span class="pre">!=</span></code> variables, it is better to use <code class="docutils literal notranslate"><span class="pre">AllDifferent</span></code> (see below) than to
+use the explicit <code class="docutils literal notranslate"><span class="pre">!=</span></code> constraints.</p>
+<blockquote>
+<div><p>:warning: If you use intersecting linear constraints, you may get problems
+because the intersection point needs to be integral. There is no such thing as
+a feasibility tolerance as in Mixed Integer Programming-solvers, where small
+deviations are allowed. The feasibility tolerance in MIP-solvers allows, e.g.,
+0.763445 == 0.763439 to still be considered equal to counter numerical issues
+of floating point arithmetic. In CP-SAT, you have to make sure that values can
+match exactly.</p>
+</div></blockquote>
+</section>
+<section id="logical-constraints-propositional-logic">
+<h2>Logical Constraints (Propositional Logic)<a class="headerlink" href="#logical-constraints-propositional-logic" title="Link to this heading"></a></h2>
+<p>You can actually model logical constraints also as linear constraints, but it
+may be advantageous to show your intent:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">b1</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">NewBoolVar</span><span class="p">(</span><span class="s2">&quot;b1&quot;</span><span class="p">)</span>
+<span class="n">b2</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">NewBoolVar</span><span class="p">(</span><span class="s2">&quot;b2&quot;</span><span class="p">)</span>
+<span class="n">b3</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">NewBoolVar</span><span class="p">(</span><span class="s2">&quot;b3&quot;</span><span class="p">)</span>
+
+<span class="n">model</span><span class="o">.</span><span class="n">AddBoolOr</span><span class="p">(</span><span class="n">b1</span><span class="p">,</span> <span class="n">b2</span><span class="p">,</span> <span class="n">b3</span><span class="p">)</span>  <span class="c1"># b1 or b2 or b3 (at least one)</span>
+<span class="n">model</span><span class="o">.</span><span class="n">AddBoolAnd</span><span class="p">(</span><span class="n">b1</span><span class="p">,</span> <span class="n">b2</span><span class="o">.</span><span class="n">Not</span><span class="p">(),</span> <span class="n">b3</span><span class="o">.</span><span class="n">Not</span><span class="p">())</span>  <span class="c1"># b1 and not b2 and not b3 (all)</span>
+<span class="n">model</span><span class="o">.</span><span class="n">AddBoolXOr</span><span class="p">(</span><span class="n">b1</span><span class="p">,</span> <span class="n">b2</span><span class="p">,</span> <span class="n">b3</span><span class="p">)</span>  <span class="c1"># b1 xor b2 xor b3</span>
+<span class="n">model</span><span class="o">.</span><span class="n">AddImplication</span><span class="p">(</span><span class="n">b1</span><span class="p">,</span> <span class="n">b2</span><span class="p">)</span>  <span class="c1"># b1 -&gt; b2</span>
+</pre></div>
+</div>
+<p>In this context you could also mention <code class="docutils literal notranslate"><span class="pre">AddAtLeastOne</span></code>, <code class="docutils literal notranslate"><span class="pre">AddAtMostOne</span></code>, and
+<code class="docutils literal notranslate"><span class="pre">AddExactlyOne</span></code>, but these can also be modelled as linear constraints.</p>
+</section>
+<section id="conditional-constraints">
+<h2>Conditional Constraints<a class="headerlink" href="#conditional-constraints" title="Link to this heading"></a></h2>
+<p>Linear constraints (Add), BoolOr, and BoolAnd support being activated by a
+condition. This is not only a very helpful constraint for many applications, but
+it is also a constraint that is highly inefficient to model with linear
+optimization (<a class="reference external" href="https://en.wikipedia.org/wiki/Big_M_method">Big M Method</a>). My
+current experience shows that CP-SAT can work much more efficiently with this
+kind of constraint. Note that you only can use a boolean variable and not
+directly add an expression, i.e., maybe you need to create an auxiliary
+variable.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">model</span><span class="o">.</span><span class="n">Add</span><span class="p">(</span><span class="n">x</span> <span class="o">+</span> <span class="n">z</span> <span class="o">==</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">y</span><span class="p">)</span><span class="o">.</span><span class="n">OnlyEnforceIf</span><span class="p">(</span><span class="n">b1</span><span class="p">)</span>
+<span class="n">model</span><span class="o">.</span><span class="n">Add</span><span class="p">(</span><span class="n">x</span> <span class="o">+</span> <span class="n">z</span> <span class="o">==</span> <span class="mi">10</span><span class="p">)</span><span class="o">.</span><span class="n">OnlyEnforceIf</span><span class="p">([</span><span class="n">b2</span><span class="p">,</span> <span class="n">b3</span><span class="o">.</span><span class="n">Not</span><span class="p">()])</span>  <span class="c1"># only enforce if b2 AND NOT b3</span>
+</pre></div>
+</div>
+</section>
+<section id="alldifferent">
+<h2>AllDifferent<a class="headerlink" href="#alldifferent" title="Link to this heading"></a></h2>
+<p>A constraint that is often seen in Constraint Programming, but I myself was
+always able to deal without it. Still, you may find it important. It forces all
+(integer) variables to have a different value.</p>
+<p><code class="docutils literal notranslate"><span class="pre">AllDifferent</span></code> is actually the only constraint that may use a domain based
+propagator (if it is not a permutation)
+[<a class="reference external" href="https://youtu.be/lmy1ddn4cyw?t=624">source</a>]</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">model</span><span class="o">.</span><span class="n">AddAllDifferent</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">)</span>
+
+<span class="c1"># You can also add a constant to the variables.</span>
+<span class="nb">vars</span> <span class="o">=</span> <span class="p">[</span><span class="n">model</span><span class="o">.</span><span class="n">NewIntVar</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">)]</span>
+<span class="n">model</span><span class="o">.</span><span class="n">AddAllDifferent</span><span class="p">(</span><span class="n">x</span> <span class="o">+</span> <span class="n">i</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">vars</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>The <a class="reference external" href="https://developers.google.com/optimization/cp/queens">N-queens</a> example of
+the official tutorial makes use of this constraint.</p>
+<p>There is a big caveat with this constraint: CP-SAT now has a preprocessing step
+that automatically tries to infer large <code class="docutils literal notranslate"><span class="pre">AllDifferent</span></code> constraints from sets of
+mutual <code class="docutils literal notranslate"><span class="pre">!=</span></code> constraints. This inference equals the NP-hard Edge Clique Cover
+problem, thus, is not a trivial task. If you add an <code class="docutils literal notranslate"><span class="pre">AllDifferent</span></code> constraint
+yourself, CP-SAT will assume that you already took care of this inference and
+will skip this step. Thus, adding a single <code class="docutils literal notranslate"><span class="pre">AllDifferent</span></code> constraint can make
+your model significantly slower, if you also use <code class="docutils literal notranslate"><span class="pre">!=</span></code> constraints. If you do not
+use <code class="docutils literal notranslate"><span class="pre">!=</span></code> constraints, you can safely use <code class="docutils literal notranslate"><span class="pre">AllDifferent</span></code> without any performance
+penalty. You may also want to use <code class="docutils literal notranslate"><span class="pre">!=</span></code> instead of <code class="docutils literal notranslate"><span class="pre">AllDifferent</span></code> if you apply it
+to overlapping sets of variables without proper optimization, because then
+CP-SAT will do the inference for you.</p>
+<p>In <a class="reference download internal" download="" href="_downloads/0f53ad7a8b0d99858777073988b2352e/add_all_different.ipynb"><span class="xref download myst">./examples/add_all_different.ipynb</span></a> you
+can find a quick experiment based on the graph coloring problem. In the graph
+coloring problem, the colors of two adjacent vertices have to be different. This
+can be easily modelled by <code class="docutils literal notranslate"><span class="pre">!=</span></code> or <code class="docutils literal notranslate"><span class="pre">AllDifferent</span></code> constraints on every edge.
+Using <code class="docutils literal notranslate"><span class="pre">!=</span></code>, we can solve the example graph in around 5 seconds. If we use
+<code class="docutils literal notranslate"><span class="pre">AllDifferent</span></code>, it takes more than 5 minutes. If we manually disable the
+<code class="docutils literal notranslate"><span class="pre">AllDifferent</span></code> inference, it also takes more than 5 minutes. Same if we add just
+a single <code class="docutils literal notranslate"><span class="pre">AllDifferent</span></code> constraint. Thus, if you use <code class="docutils literal notranslate"><span class="pre">AllDifferent</span></code> do it
+properly on large sets, or use <code class="docutils literal notranslate"><span class="pre">!=</span></code> constraints and let CP-SAT infer the
+<code class="docutils literal notranslate"><span class="pre">AllDifferent</span></code> constraints for you.</p>
+<p>Maybe CP-SAT will allow you to use <code class="docutils literal notranslate"><span class="pre">AllDifferent</span></code> without any performance
+penalty in the future, but for now, you have to be aware of this. See also
+<a class="reference external" href="https://github.com/google/or-tools/blob/1d696f9108a0ebfd99feb73b9211e2f5a6b0812b/ortools/sat/sat_parameters.proto#L542">the optimization parameter documentation</a>.</p>
+</section>
+<section id="absolute-values-and-max-min">
+<h2>Absolute Values and Max/Min<a class="headerlink" href="#absolute-values-and-max-min" title="Link to this heading"></a></h2>
+<p>Two often occurring and important operators are absolute values as well as
+minimum and maximum values. You cannot use operators directly in the
+constraints, but you can use them via an auxiliary variable and a dedicated
+constraint. These constraints are reasonably efficient in my experience.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># abs_xz == |x+z|</span>
+<span class="n">abs_xz</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">NewIntVar</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">200</span><span class="p">,</span> <span class="s2">&quot;|x+z|&quot;</span><span class="p">)</span>  <span class="c1"># ub = ub(x)+ub(z)</span>
+<span class="n">model</span><span class="o">.</span><span class="n">AddAbsEquality</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">abs_xz</span><span class="p">,</span> <span class="n">expr</span><span class="o">=</span><span class="n">x</span> <span class="o">+</span> <span class="n">z</span><span class="p">)</span>
+<span class="c1"># max_xyz = max(x,y,z)</span>
+<span class="n">max_xyz</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">NewIntVar</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="s2">&quot;max(x,y, z)&quot;</span><span class="p">)</span>
+<span class="n">model</span><span class="o">.</span><span class="n">AddMaxEquality</span><span class="p">(</span><span class="n">max_xyz</span><span class="p">,</span> <span class="p">[</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">])</span>
+<span class="c1"># min_xyz = min(x,y,z)</span>
+<span class="n">min_xyz</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">NewIntVar</span><span class="p">(</span><span class="o">-</span><span class="mi">100</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="s2">&quot; min(x,y, z)&quot;</span><span class="p">)</span>
+<span class="n">model</span><span class="o">.</span><span class="n">AddMinEquality</span><span class="p">(</span><span class="n">min_xyz</span><span class="p">,</span> <span class="p">[</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">])</span>
+</pre></div>
+</div>
+</section>
+<section id="multiplication-and-modulo">
+<h2>Multiplication and Modulo<a class="headerlink" href="#multiplication-and-modulo" title="Link to this heading"></a></h2>
+<p>A big nono in linear optimization (the most successful optimization area) are
+multiplication of variables (because this would no longer be linear, right...).
+Often we can linearize the model by some tricks and tools like Gurobi are also
+able to do some non-linear optimization ( in the end, it is most often
+translated to a less efficient linear model again). CP-SAT can also work with
+multiplication and modulo of variables, again as constraint not as operation. So
+far, I have not made good experience with these constraints, i.e., the models
+end up being slow to solve, and would recommend to only use them if you really
+need them and cannot find a way around them.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">xyz</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">NewIntVar</span><span class="p">(</span><span class="o">-</span><span class="mi">100</span> <span class="o">*</span> <span class="mi">100</span> <span class="o">*</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">100</span><span class="o">**</span><span class="mi">3</span><span class="p">,</span> <span class="s2">&quot;x*y*z&quot;</span><span class="p">)</span>
+<span class="n">model</span><span class="o">.</span><span class="n">AddMultiplicationEquality</span><span class="p">(</span><span class="n">xyz</span><span class="p">,</span> <span class="p">[</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">])</span>  <span class="c1"># xyz = x*y*z</span>
+<span class="n">model</span><span class="o">.</span><span class="n">AddModuloEquality</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>  <span class="c1"># x = y % 3</span>
+</pre></div>
+</div>
+<blockquote>
+<div><p>:warning: The documentation indicates that multiplication of more than two
+variables is supported, but I got an error when trying it out. I have not
+investigated this further, as I would expect it to be slow anyway.</p>
+</div></blockquote>
+</section>
+<section id="circuit-tour-constraints">
+<h2>Circuit/Tour-Constraints<a class="headerlink" href="#circuit-tour-constraints" title="Link to this heading"></a></h2>
+<p>The
+<a class="reference external" href="https://en.wikipedia.org/wiki/Travelling_salesman_problem">Traveling Salesman Problem (TSP)</a>
+or Hamiltonicity Problem are important and difficult problems that occur as
+subproblem in many contexts. For solving the classical TSP, you should use the
+extremely powerful solver
+<a class="reference external" href="https://www.math.uwaterloo.ca/tsp/concorde.html">Concorde</a>. There is also a
+separate <a class="reference external" href="https://developers.google.com/optimization/routing">part in ortools</a>
+dedicated to routing. If it is just a subproblem, you can add a simple
+constraint by encoding the allowed edges as triples of start vertex index,
+target vertex index, and literal/variable. Note that this is using directed
+edges/arcs. By adding a triple (v,v,var), you can allow CP-SAT to skip the
+vertex v.</p>
+<blockquote>
+<div><p>If the tour-problem is the fundamental part of your problem, you may be better
+served with using a Mixed Integer Programming solver. Don't expect to solve
+tours much larger than 250 vertices with CP-SAT.</p>
+</div></blockquote>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">ortools.sat.python</span> <span class="kn">import</span> <span class="n">cp_model</span>
+
+<span class="c1"># Weighted, directed graph as instance</span>
+<span class="c1"># (source, destination) -&gt; cost</span>
+<span class="n">dgraph</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">):</span> <span class="mi">13</span><span class="p">,</span>
+    <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">):</span> <span class="mi">17</span><span class="p">,</span>
+    <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">):</span> <span class="mi">16</span><span class="p">,</span>
+    <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">):</span> <span class="mi">19</span><span class="p">,</span>
+    <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">):</span> <span class="mi">22</span><span class="p">,</span>
+    <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">):</span> <span class="mi">14</span><span class="p">,</span>
+    <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">):</span> <span class="mi">15</span><span class="p">,</span>
+    <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">):</span> <span class="mi">28</span><span class="p">,</span>
+    <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">):</span> <span class="mi">25</span><span class="p">,</span>
+    <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">):</span> <span class="mi">24</span><span class="p">,</span>
+    <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">):</span> <span class="mi">11</span><span class="p">,</span>
+    <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">):</span> <span class="mi">27</span><span class="p">,</span>
+<span class="p">}</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">cp_model</span><span class="o">.</span><span class="n">CpModel</span><span class="p">()</span>
+<span class="c1"># Variables: Binary decision variables for the edges</span>
+<span class="n">edge_vars</span> <span class="o">=</span> <span class="p">{(</span><span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span> <span class="n">model</span><span class="o">.</span><span class="n">NewBoolVar</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;e_</span><span class="si">{</span><span class="n">u</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">v</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="ow">in</span> <span class="n">dgraph</span><span class="o">.</span><span class="n">keys</span><span class="p">()}</span>
+<span class="c1"># Constraints: Add Circuit constraint</span>
+<span class="c1"># We need to tell CP-SAT which variable corresponds to which edge.</span>
+<span class="c1"># This is done by passing a list of tuples (u,v,var) to AddCircuit.</span>
+<span class="n">circuit</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">var</span><span class="p">)</span> <span class="k">for</span> <span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">),</span> <span class="n">var</span> <span class="ow">in</span> <span class="n">edge_vars</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>  <span class="c1"># (source, destination, variable)</span>
+<span class="p">]</span>
+<span class="n">model</span><span class="o">.</span><span class="n">AddCircuit</span><span class="p">(</span><span class="n">circuit</span><span class="p">)</span>
+
+<span class="c1"># Objective: minimize the total cost of edges</span>
+<span class="n">obj</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">dgraph</span><span class="p">[(</span><span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">)]</span> <span class="o">*</span> <span class="n">x</span> <span class="k">for</span> <span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">),</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">edge_vars</span><span class="o">.</span><span class="n">items</span><span class="p">())</span>
+<span class="n">model</span><span class="o">.</span><span class="n">Minimize</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+
+<span class="c1"># Solve</span>
+<span class="n">solver</span> <span class="o">=</span> <span class="n">cp_model</span><span class="o">.</span><span class="n">CpSolver</span><span class="p">()</span>
+<span class="n">status</span> <span class="o">=</span> <span class="n">solver</span><span class="o">.</span><span class="n">Solve</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+<span class="k">assert</span> <span class="n">status</span> <span class="ow">in</span> <span class="p">(</span><span class="n">cp_model</span><span class="o">.</span><span class="n">OPTIMAL</span><span class="p">,</span> <span class="n">cp_model</span><span class="o">.</span><span class="n">FEASIBLE</span><span class="p">)</span>
+<span class="n">tour</span> <span class="o">=</span> <span class="p">[(</span><span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">),</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">edge_vars</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">solver</span><span class="o">.</span><span class="n">Value</span><span class="p">(</span><span class="n">x</span><span class="p">)]</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Tour:&quot;</span><span class="p">,</span> <span class="n">tour</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>Tour: [(0, 1), (2, 0), (3, 2), (1, 3)]
+</pre></div>
+</div>
+<p>You can use this constraint very flexibly for many tour problems. We added three
+examples:</p>
+<ul class="simple">
+<li><p><a class="reference download internal" download="" href="_downloads/42199395274aff2e39c19bc139b14a0f/add_circuit.py"><span class="xref download myst">./examples/add_circuit.py</span></a>: The example above,
+slightly extended. Find out how large you can make the graph.</p></li>
+<li><p><a class="reference download internal" download="" href="_downloads/ff5a7fa5173fbf79d032db6bd27dcaa6/add_circuit_budget.py"><span class="xref download myst">./examples/add_circuit_budget.py</span></a>: Find the
+largest tour with a given budget. This will be a bit more difficult to solve.</p></li>
+<li><p><a class="reference download internal" download="" href="_downloads/e3db44e911f80b95e3ef841fb29af717/add_circuit_multi_tour.py"><span class="xref download myst">./examples/add_circuit_multi_tour.py</span></a>:
+Allow $k$ tours, which in sum need to be minimal and cover all vertices.</p></li>
+</ul>
+<p>The most powerful TSP-solver <em>concorde</em> uses a linear programming based
+approach, but with a lot of additional techniques to improve the performance.
+The book <em>In Pursuit of the Traveling Salesman</em> by William Cook may have already
+given you some insights. For more details, you can also read the more advanced
+book <em>The Traveling Salesman Problem: A Computational Study</em> by Applegate,
+Bixby, Chvatál, and Cook. If you need to solve some variant, MIP-solvers (which
+could be called a generalization of that approach) are known to perform well
+using the
+<a class="reference external" href="https://en.wikipedia.org/wiki/Travelling_salesman_problem#Dantzig%E2%80%93Fulkerson%E2%80%93Johnson_formulation">Dantzig-Fulkerson-Johnson Formulation</a>.
+This model is theoretically exponential, but using lazy constraints (which are
+added when needed), it can be solved efficiently in practice. The
+<a class="reference external" href="https://en.wikipedia.org/wiki/Travelling_salesman_problem#Miller%E2%80%93Tucker%E2%80%93Zemlin_formulation%5B21%5D">Miller-Tucker-Zemlin formulation</a>
+allows a small formulation size, but is bad in practice with MIP-solvers due to
+its weak linear relaxations. Because CP-SAT does not allow lazy constraints, the
+Danzig-Fulkerson-Johnson formulation would require many iterations and a lot of
+wasted resources. As CP-SAT does not suffer as much from weak linear relaxations
+(replacing Big-M by logic constraints, such as <code class="docutils literal notranslate"><span class="pre">OnlyEnforceIf</span></code>), the
+Miller-Tucker-Zemlin formulation may be an option in some cases, though a simple
+experiment (see below) shows a similar performance as the iterative approach.
+When using <code class="docutils literal notranslate"><span class="pre">AddCircuit</span></code>, CP-SAT will actually use the LP-technique for the
+linear relaxation (so using this constraint may really help, as otherwise CP-SAT
+will not know that your manual constraints are actually a tour with a nice
+linear relaxation), and probably has the lazy constraints implemented
+internally. Using the <code class="docutils literal notranslate"><span class="pre">AddCircuit</span></code> constraint is thus highly recommendable for
+any circle or path constraints.</p>
+<p>In
+<a class="reference download internal" download="" href="_downloads/d55ce447bff729f8790dd0f85b177c82/add_circuit_comparison.ipynb"><span class="xref download myst">./examples/add_circuit_comparison.ipynb</span></a>,
+we compare the performance of some models for the TSP, to estimate the
+performance of CP-SAT for the TSP.</p>
+<ul class="simple">
+<li><p><strong>AddCircuit</strong> can solve the Euclidean TSP up to a size of around 110 vertices
+in 10 seconds to optimality.</p></li>
+<li><p><strong>MTZ (Miller-Tucker-Zemlin)</strong> can solve the eculidean TSP up to a size of
+around 50 vertices in 10 seconds to optimality.</p></li>
+<li><p><strong>Dantzig-Fulkerson-Johnson via iterative solving</strong> can solve the eculidean
+TSP up to a size of around 50 vertices in 10 seconds to optimality.</p></li>
+<li><p><strong>Dantzig-Fulkerson-Johnson via lazy constraints in Gurobi</strong> can solve the
+eculidean TSP up to a size of around 225 vertices in 10 seconds to optimality.</p></li>
+</ul>
+<p>This tells you to use a MIP-solver for problems dominated by the tour
+constraint, and if you have to use CP-SAT, you should definitely use the
+<code class="docutils literal notranslate"><span class="pre">AddCircuit</span></code> constraint.</p>
+<blockquote>
+<div><p>These are all naive implementations, and the benchmark is not very rigorous.
+These values are only meant to give you a rough idea of the performance.
+Additionally, this benchmark was regarding proving <em>optimality</em>. The
+performance in just optimizing a tour could be different. The numbers could
+also look different for differently generated instances. You can find a more
+detailed benchmark in the later section on proper evaluation.</p>
+</div></blockquote>
+<p>Here is the performance of <code class="docutils literal notranslate"><span class="pre">AddCircuit</span></code> for the TSP on some instances (rounded
+eucl. distance) from the TSPLIB with a time limit of 90 seconds.</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head text-left"><p>Instance</p></th>
+<th class="head text-right"><p># nodes</p></th>
+<th class="head text-right"><p>runtime</p></th>
+<th class="head text-right"><p>lower bound</p></th>
+<th class="head text-right"><p>objective</p></th>
+<th class="head text-right"><p>opt. gap</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td class="text-left"><p>att48</p></td>
+<td class="text-right"><p>48</p></td>
+<td class="text-right"><p>0.47</p></td>
+<td class="text-right"><p>33522</p></td>
+<td class="text-right"><p>33522</p></td>
+<td class="text-right"><p>0</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>eil51</p></td>
+<td class="text-right"><p>51</p></td>
+<td class="text-right"><p>0.69</p></td>
+<td class="text-right"><p>426</p></td>
+<td class="text-right"><p>426</p></td>
+<td class="text-right"><p>0</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>st70</p></td>
+<td class="text-right"><p>70</p></td>
+<td class="text-right"><p>0.8</p></td>
+<td class="text-right"><p>675</p></td>
+<td class="text-right"><p>675</p></td>
+<td class="text-right"><p>0</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>eil76</p></td>
+<td class="text-right"><p>76</p></td>
+<td class="text-right"><p>2.49</p></td>
+<td class="text-right"><p>538</p></td>
+<td class="text-right"><p>538</p></td>
+<td class="text-right"><p>0</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>pr76</p></td>
+<td class="text-right"><p>76</p></td>
+<td class="text-right"><p>54.36</p></td>
+<td class="text-right"><p>108159</p></td>
+<td class="text-right"><p>108159</p></td>
+<td class="text-right"><p>0</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>kroD100</p></td>
+<td class="text-right"><p>100</p></td>
+<td class="text-right"><p>9.72</p></td>
+<td class="text-right"><p>21294</p></td>
+<td class="text-right"><p>21294</p></td>
+<td class="text-right"><p>0</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>kroC100</p></td>
+<td class="text-right"><p>100</p></td>
+<td class="text-right"><p>5.57</p></td>
+<td class="text-right"><p>20749</p></td>
+<td class="text-right"><p>20749</p></td>
+<td class="text-right"><p>0</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>kroB100</p></td>
+<td class="text-right"><p>100</p></td>
+<td class="text-right"><p>6.2</p></td>
+<td class="text-right"><p>22141</p></td>
+<td class="text-right"><p>22141</p></td>
+<td class="text-right"><p>0</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>kroE100</p></td>
+<td class="text-right"><p>100</p></td>
+<td class="text-right"><p>9.06</p></td>
+<td class="text-right"><p>22049</p></td>
+<td class="text-right"><p>22068</p></td>
+<td class="text-right"><p>0</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>kroA100</p></td>
+<td class="text-right"><p>100</p></td>
+<td class="text-right"><p>8.41</p></td>
+<td class="text-right"><p>21282</p></td>
+<td class="text-right"><p>21282</p></td>
+<td class="text-right"><p>0</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>eil101</p></td>
+<td class="text-right"><p>101</p></td>
+<td class="text-right"><p>2.24</p></td>
+<td class="text-right"><p>629</p></td>
+<td class="text-right"><p>629</p></td>
+<td class="text-right"><p>0</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>lin105</p></td>
+<td class="text-right"><p>105</p></td>
+<td class="text-right"><p>1.37</p></td>
+<td class="text-right"><p>14379</p></td>
+<td class="text-right"><p>14379</p></td>
+<td class="text-right"><p>0</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>pr107</p></td>
+<td class="text-right"><p>107</p></td>
+<td class="text-right"><p>1.2</p></td>
+<td class="text-right"><p>44303</p></td>
+<td class="text-right"><p>44303</p></td>
+<td class="text-right"><p>0</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>pr124</p></td>
+<td class="text-right"><p>124</p></td>
+<td class="text-right"><p>33.8</p></td>
+<td class="text-right"><p>59009</p></td>
+<td class="text-right"><p>59030</p></td>
+<td class="text-right"><p>0</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>pr136</p></td>
+<td class="text-right"><p>136</p></td>
+<td class="text-right"><p>35.98</p></td>
+<td class="text-right"><p>96767</p></td>
+<td class="text-right"><p>96861</p></td>
+<td class="text-right"><p>0</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>pr144</p></td>
+<td class="text-right"><p>144</p></td>
+<td class="text-right"><p>21.27</p></td>
+<td class="text-right"><p>58534</p></td>
+<td class="text-right"><p>58571</p></td>
+<td class="text-right"><p>0</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>kroB150</p></td>
+<td class="text-right"><p>150</p></td>
+<td class="text-right"><p>58.44</p></td>
+<td class="text-right"><p>26130</p></td>
+<td class="text-right"><p>26130</p></td>
+<td class="text-right"><p>0</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>kroA150</p></td>
+<td class="text-right"><p>150</p></td>
+<td class="text-right"><p>90.94</p></td>
+<td class="text-right"><p>26498</p></td>
+<td class="text-right"><p>26977</p></td>
+<td class="text-right"><p>2%</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>pr152</p></td>
+<td class="text-right"><p>152</p></td>
+<td class="text-right"><p>15.28</p></td>
+<td class="text-right"><p>73682</p></td>
+<td class="text-right"><p>73682</p></td>
+<td class="text-right"><p>0</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>kroA200</p></td>
+<td class="text-right"><p>200</p></td>
+<td class="text-right"><p>90.99</p></td>
+<td class="text-right"><p>29209</p></td>
+<td class="text-right"><p>29459</p></td>
+<td class="text-right"><p>1%</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>kroB200</p></td>
+<td class="text-right"><p>200</p></td>
+<td class="text-right"><p>31.69</p></td>
+<td class="text-right"><p>29437</p></td>
+<td class="text-right"><p>29437</p></td>
+<td class="text-right"><p>0</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>pr226</p></td>
+<td class="text-right"><p>226</p></td>
+<td class="text-right"><p>74.61</p></td>
+<td class="text-right"><p>80369</p></td>
+<td class="text-right"><p>80369</p></td>
+<td class="text-right"><p>0</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>gil262</p></td>
+<td class="text-right"><p>262</p></td>
+<td class="text-right"><p>91.58</p></td>
+<td class="text-right"><p>2365</p></td>
+<td class="text-right"><p>2416</p></td>
+<td class="text-right"><p>2%</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>pr264</p></td>
+<td class="text-right"><p>264</p></td>
+<td class="text-right"><p>92.03</p></td>
+<td class="text-right"><p>49121</p></td>
+<td class="text-right"><p>49512</p></td>
+<td class="text-right"><p>1%</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>pr299</p></td>
+<td class="text-right"><p>299</p></td>
+<td class="text-right"><p>92.18</p></td>
+<td class="text-right"><p>47709</p></td>
+<td class="text-right"><p>49217</p></td>
+<td class="text-right"><p>3%</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>linhp318</p></td>
+<td class="text-right"><p>318</p></td>
+<td class="text-right"><p>92.45</p></td>
+<td class="text-right"><p>41915</p></td>
+<td class="text-right"><p>52032</p></td>
+<td class="text-right"><p>19%</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>lin318</p></td>
+<td class="text-right"><p>318</p></td>
+<td class="text-right"><p>92.43</p></td>
+<td class="text-right"><p>41915</p></td>
+<td class="text-right"><p>52025</p></td>
+<td class="text-right"><p>19%</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>pr439</p></td>
+<td class="text-right"><p>439</p></td>
+<td class="text-right"><p>94.22</p></td>
+<td class="text-right"><p>105610</p></td>
+<td class="text-right"><p>163452</p></td>
+<td class="text-right"><p>35%</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="array-operations">
+<h2>Array operations<a class="headerlink" href="#array-operations" title="Link to this heading"></a></h2>
+<p>You can even go completely bonkers and work with arrays in your model. The
+element at a variable index can be accessed via an <code class="docutils literal notranslate"><span class="pre">AddElement</span></code> constraint.</p>
+<p>The second constraint is actually more of a stable matching in array form. For
+two arrays of variables $v,w, |v|=|w|$, it requires
+$v[i]=j \Leftrightarrow w[j]=i \quad \forall i,j \in 0,\ldots,|v|-1$. Note that
+this restricts the values of the variables in the arrays to $0,\ldots, |v|-1$.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># ai = [x,y,z][i]  assign ai the value of the i-th entry.</span>
+<span class="n">ai</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">NewIntVar</span><span class="p">(</span><span class="o">-</span><span class="mi">100</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="s2">&quot;a[i]&quot;</span><span class="p">)</span>
+<span class="n">i</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">NewIntVar</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="s2">&quot;i&quot;</span><span class="p">)</span>
+<span class="n">model</span><span class="o">.</span><span class="n">AddElement</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="n">i</span><span class="p">,</span> <span class="n">variables</span><span class="o">=</span><span class="p">[</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">],</span> <span class="n">target</span><span class="o">=</span><span class="n">ai</span><span class="p">)</span>
+
+<span class="n">model</span><span class="o">.</span><span class="n">AddInverse</span><span class="p">([</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">],</span> <span class="p">[</span><span class="n">z</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">x</span><span class="p">])</span>
+</pre></div>
+</div>
+</section>
+<section id="interval-variables-and-no-overlap-constraints">
+<h2>Interval Variables and No-Overlap Constraints<a class="headerlink" href="#interval-variables-and-no-overlap-constraints" title="Link to this heading"></a></h2>
+<p>CP-SAT also supports interval variables and corresponding constraints. These are
+important for scheduling and packing problems. There are simple no-overlap
+constraints for intervals for one-dimensional and two-dimensional intervals. In
+two-dimensional intervals, only one dimension is allowed to overlap, i.e., the
+other dimension has to be disjoint. This is essentially rectangle packing. Let
+us see how we can model a simple 2-dimensional packing problem. Note that
+<code class="docutils literal notranslate"><span class="pre">NewIntervalVariable</span></code> may indicate a new variable, but it is actually a
+constraint container in which you have to insert the classical integer
+variables. This constraint container is required, e.g., for the no-overlap
+constraint.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">ortools.sat.python</span> <span class="kn">import</span> <span class="n">cp_model</span>
+
+<span class="c1"># Instance</span>
+<span class="n">container</span> <span class="o">=</span> <span class="p">(</span><span class="mi">40</span><span class="p">,</span> <span class="mi">15</span><span class="p">)</span>
+<span class="n">boxes</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">(</span><span class="mi">11</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">13</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">11</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">13</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">11</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">13</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">11</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">11</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">13</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span>
+    <span class="c1"># (6,  2),  # add to make tight</span>
+    <span class="c1"># (6,3), # add to make infeasible</span>
+<span class="p">]</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">cp_model</span><span class="o">.</span><span class="n">CpModel</span><span class="p">()</span>
+
+<span class="c1"># We have to create the variable for the bottom left corner of the boxes.</span>
+<span class="c1"># We directly limit their range, such that the boxes are inside the container</span>
+<span class="n">x_vars</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">NewIntVar</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">container</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">box</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;x1_</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">box</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">boxes</span><span class="p">)</span>
+<span class="p">]</span>
+<span class="n">y_vars</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">NewIntVar</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">container</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">box</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;y1_</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">box</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">boxes</span><span class="p">)</span>
+<span class="p">]</span>
+<span class="c1"># Interval variables are actually more like constraint containers, that are then passed to the no overlap constraint</span>
+<span class="c1"># Note that we could also make size and end variables, but we don&#39;t need them here</span>
+<span class="n">x_interval_vars</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">NewIntervalVar</span><span class="p">(</span>
+        <span class="n">start</span><span class="o">=</span><span class="n">x_vars</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">size</span><span class="o">=</span><span class="n">box</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">end</span><span class="o">=</span><span class="n">x_vars</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="n">box</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;x_interval_</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">box</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">boxes</span><span class="p">)</span>
+<span class="p">]</span>
+<span class="n">y_interval_vars</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">NewIntervalVar</span><span class="p">(</span>
+        <span class="n">start</span><span class="o">=</span><span class="n">y_vars</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">size</span><span class="o">=</span><span class="n">box</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">end</span><span class="o">=</span><span class="n">y_vars</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="n">box</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;y_interval_</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">box</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">boxes</span><span class="p">)</span>
+<span class="p">]</span>
+<span class="c1"># Enforce that no two rectangles overlap</span>
+<span class="n">model</span><span class="o">.</span><span class="n">AddNoOverlap2D</span><span class="p">(</span><span class="n">x_interval_vars</span><span class="p">,</span> <span class="n">y_interval_vars</span><span class="p">)</span>
+
+<span class="c1"># Solve!</span>
+<span class="n">solver</span> <span class="o">=</span> <span class="n">cp_model</span><span class="o">.</span><span class="n">CpSolver</span><span class="p">()</span>
+<span class="n">solver</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">log_search_progress</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="n">solver</span><span class="o">.</span><span class="n">log_callback</span> <span class="o">=</span> <span class="nb">print</span>
+<span class="n">status</span> <span class="o">=</span> <span class="n">solver</span><span class="o">.</span><span class="n">Solve</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+<span class="k">assert</span> <span class="n">status</span> <span class="o">==</span> <span class="n">cp_model</span><span class="o">.</span><span class="n">OPTIMAL</span>
+<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">box</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">boxes</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;box </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2"> is placed at (</span><span class="si">{</span><span class="n">solver</span><span class="o">.</span><span class="n">Value</span><span class="p">(</span><span class="n">x_vars</span><span class="p">[</span><span class="n">i</span><span class="p">])</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">solver</span><span class="o">.</span><span class="n">Value</span><span class="p">(</span><span class="n">y_vars</span><span class="p">[</span><span class="n">i</span><span class="p">])</span><span class="si">}</span><span class="s2">)&quot;</span>
+    <span class="p">)</span>
+</pre></div>
+</div>
+<blockquote>
+<div><p>The keywords <code class="docutils literal notranslate"><span class="pre">start</span></code> may be named <code class="docutils literal notranslate"><span class="pre">begin</span></code> in some versions of ortools.</p>
+</div></blockquote>
+<p>See <a class="reference download internal" download="" href="_downloads/f2b79615ff27c9d06eb994972999d13d/add_no_overlap_2d.ipynb"><span class="xref download myst">this notebook</span></a> for the full example.</p>
+<p>There is also the option for optional intervals, i.e., intervals that may be
+skipped. This would allow you to have multiple containers or do a knapsack-like
+packing.</p>
+<p>The resolution seems to be quite important for this problem, as mentioned
+before. The following table shows the runtime for different resolutions (the
+solution is always the same, just scaled).</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Resolution</p></th>
+<th class="head"><p>Runtime</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>1x</p></td>
+<td><p>0.02s</p></td>
+</tr>
+<tr class="row-odd"><td><p>10x</p></td>
+<td><p>0.7s</p></td>
+</tr>
+<tr class="row-even"><td><p>100x</p></td>
+<td><p>7.6s</p></td>
+</tr>
+<tr class="row-odd"><td><p>1000x</p></td>
+<td><p>75s</p></td>
+</tr>
+<tr class="row-even"><td><p>10_000x</p></td>
+<td><p>&gt;15min</p></td>
+</tr>
+</tbody>
+</table>
+<p>See <a class="reference download internal" download="" href="_downloads/7ac36bd14dbd4910ffb67f98fb018f75/add_no_overlap_2d_scaling.ipynb"><span class="xref download myst">this notebook</span></a> for the full
+example.</p>
+<p>However, while playing around with less documented features, I noticed that the
+performance can be improved drastically with the following parameters:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">solver</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">use_energetic_reasoning_in_no_overlap_2d</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="n">solver</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">use_timetabling_in_no_overlap_2d</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="n">solver</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">use_pairwise_reasoning_in_no_overlap_2d</span> <span class="o">=</span> <span class="kc">True</span>
+</pre></div>
+</div>
+<p>Instances that could not be solved in 15 minutes before, can now be solved in
+less than a second. This of course does not apply for all instances, but if you
+are working with this constraint, you may want to jiggle with these parameters
+if it struggles with solving your instances.</p>
+</section>
+<section id="there-is-more">
+<h2>There is more<a class="headerlink" href="#there-is-more" title="Link to this heading"></a></h2>
+<p>CP-SAT has even more constraints, but I think I covered the most important ones.
+If you need more, you can check out the
+<a class="reference external" href="https://developers.google.com/optimization/reference/python/sat/python/cp_model#cp_model.CpModel">official documentation</a>.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="02_example.html" class="btn btn-neutral float-left" title="Example" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="04_parameters.html" class="btn btn-neutral float-right" title="Parameters" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Dominik Krupke (TU Braunschweig, IBR, Algorithms Group).</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

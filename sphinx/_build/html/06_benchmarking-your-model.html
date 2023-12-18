@@ -1,0 +1,739 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="english" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Benchmarking your Model &mdash; cp-sat primer 1.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=14667faf"></script>
+        <script src="_static/doctools.js?v=888ff710"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Using CP-SAT for Bigger Problems with Large Neighborhood Search" href="07_large-neighborhood-search.html" />
+    <link rel="prev" title="How does it work?" href="05_how-does-it-work.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            cp-sat primer
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="00_introduction.html">Using and Understanding ortools' CP-SAT: A Primer and Cheat Sheet</a></li>
+<li class="toctree-l1"><a class="reference internal" href="01_installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="02_example.html">Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="03_modelling.html">Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="04_parameters.html">Parameters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="05_how-does-it-work.html">How does it work?</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Benchmarking your Model</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#distinguishing-exploratory-and-workhorse-studies-in-benchmarking">Distinguishing Exploratory and Workhorse Studies in Benchmarking</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#exploratory-studies-foundation-building">Exploratory Studies: Foundation Building</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#workhorse-studies-conducting-in-depth-evaluations">Workhorse Studies: Conducting In-depth Evaluations</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#designing-a-robust-benchmark-for-effective-studies">Designing a Robust Benchmark for Effective Studies</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#efficiently-managing-your-benchmarks">Efficiently Managing Your Benchmarks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#analyzing-the-results">Analyzing the results</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#random-instances">Random Instances</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#tsplib">TSPLIB</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#conclusion">Conclusion</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="07_large-neighborhood-search.html">Using CP-SAT for Bigger Problems with Large Neighborhood Search</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">cp-sat primer</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Benchmarking your Model</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/06_benchmarking-your-model.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="benchmarking-your-model">
+<h1>Benchmarking your Model<a class="headerlink" href="#benchmarking-your-model" title="Link to this heading"></a></h1>
+<p>Benchmarking is an essential step if your model isn't yet meeting the
+performance standards of your application or if you're aiming for an academic
+publication. This process involves analyzing your model's performance,
+especially important if your model has adjustable parameters. Running your model
+on a set of predefined instances (a benchmark) allows you to fine-tune these
+parameters and compare results. Moreover, if alternative models exist,
+benchmarking helps you ascertain whether your model truly outperforms these
+competitors.</p>
+<p>Designing an effective benchmark is a nuanced task that demands expertise. This
+section aims to guide you in creating a reliable benchmark suitable for
+publication purposes.</p>
+<p>Given the breadth and complexity of benchmarking, our focus will be on the
+basics, particularly through the lens of the Traveling Salesman Problem (TSP),
+as previously discussed in the <code class="docutils literal notranslate"><span class="pre">AddCircuit</span></code> section. We refer to the different
+model implementations as 'solvers', and we'll explore four specific types:</p>
+<ul class="simple">
+<li><p>A solver employing the <code class="docutils literal notranslate"><span class="pre">AddCircuit</span></code> approach.</p></li>
+<li><p>A solver based on the Miller-Tucker-Zemlin formulation.</p></li>
+<li><p>A solver utilizing the Dantzig-Fulkerson-Johnson formulation with iterative
+addition of subtour constraints until a connected tour is achieved.</p></li>
+<li><p>A Gurobi-based solver applying the Dantzig-Fulkerson-Johnson formulation via
+Lazy Constraints, which are not supported by CP-SAT.</p></li>
+</ul>
+<p>This example highlights common challenges in benchmarking and strategies to
+address them. A key obstacle in solving NP-hard problems is the variability in
+solver performance across different instances. For instance, a solver might
+easily handle a large instance but struggle with a smaller one, and vice versa.
+Consequently, it's crucial to ensure that your benchmark encompasses a
+representative variety of instances. This diversity is vital for drawing
+meaningful conclusions, such as the maximum size of a TSP instance that can be
+solved or the most effective solver to use.</p>
+<p>For a comprehensive exploration of benchmarking, I highly recommend Catherine C.
+McGeoch's book,
+<a class="reference external" href="https://www.cambridge.org/core/books/guide-to-experimental-algorithmics/CDB0CB718F6250E0806C909E1D3D1082">&quot;A Guide to Experimental Algorithmics&quot;</a>,
+which offers an in-depth discussion on this topic.</p>
+<section id="distinguishing-exploratory-and-workhorse-studies-in-benchmarking">
+<h2>Distinguishing Exploratory and Workhorse Studies in Benchmarking<a class="headerlink" href="#distinguishing-exploratory-and-workhorse-studies-in-benchmarking" title="Link to this heading"></a></h2>
+<p>Before diving into comprehensive benchmarking, it’s essential to conduct
+preliminary investigations to assess your model’s capabilities and identify any
+foundational issues. This phase, known as <em>exploratory studies</em>, is crucial for
+establishing the basis for more detailed benchmarking, subsequently termed as
+<em>workhorse studies</em>. These latter studies aim to provide reliable answers to
+specific research questions and are often the core of academic publications.
+It's important to explicitly differentiate between these two study types and
+maintain their distinct purposes: exploratory studies for initial understanding
+and flexibility, and workhorse studies for rigorous, reproducible research.</p>
+<section id="exploratory-studies-foundation-building">
+<h3>Exploratory Studies: Foundation Building<a class="headerlink" href="#exploratory-studies-foundation-building" title="Link to this heading"></a></h3>
+<p>Exploratory studies serve as an introduction to both your model and the problem
+it addresses. This phase is about gaining preliminary understanding and
+insights.</p>
+<ul class="simple">
+<li><p><strong>Objective</strong>: The goal here is to gather early insights rather than
+definitive conclusions. This phase is instrumental in identifying realistic
+problem sizes, potential challenges, and narrowing down hyperparameter search
+spaces.</p></li>
+</ul>
+<p>For instance, in the <code class="docutils literal notranslate"><span class="pre">AddCircuit</span></code>-section, an exploratory study helped us
+determine that our focus should be on instances with 100 to 200 nodes. If you
+encounter fundamental issues with your model at this stage, it’s advisable to
+address these before proceeding to workhorse studies.</p>
+<blockquote>
+<div><p>Occasionally, the primary performance bottleneck in your model may not be
+CP-SAT but rather the Python segment where the model is being generated. In
+these instances, identifying the most resource-intensive parts of your Python
+code is crucial. I have found the profiler
+<a class="reference external" href="https://github.com/plasma-umass/scalene">Scalene</a> to be well-suited to
+investigate and pinpoint these bottlenecks.</p>
+</div></blockquote>
+</section>
+<section id="workhorse-studies-conducting-in-depth-evaluations">
+<h3>Workhorse Studies: Conducting In-depth Evaluations<a class="headerlink" href="#workhorse-studies-conducting-in-depth-evaluations" title="Link to this heading"></a></h3>
+<p>Workhorse studies follow the exploratory phase, characterized by more structured
+and meticulous approaches. This stage is vital for a comprehensive evaluation of
+your model and collecting substantive data for analysis.</p>
+<ul class="simple">
+<li><p><strong>Objective</strong>: These studies are designed to answer specific research
+questions and provide meaningful insights. The approach here is more
+methodical, focusing on clearly defined research questions. The benchmarks
+designed should be well-structured and large enough to yield statistically
+significant results.</p></li>
+</ul>
+<p>Remember, the aim is not to create a flawless benchmark right away but to evolve
+it as concrete questions emerge and as your understanding of the model and
+problem deepens. These studies, unlike exploratory ones, will be the focus of
+your scientific publications, with exploratory studies only referenced for
+justifying certain design decisions.</p>
+<p><strong>Hint: Use the
+<a class="reference external" href="https://raw.githubusercontent.com/SIGPLAN/empirical-evaluation/master/checklist/checklist.pdf">SIGPLAN Empirical Evaluation Checklist</a>
+if your evaluation has to satisfy academic standards.</strong></p>
+</section>
+</section>
+<section id="designing-a-robust-benchmark-for-effective-studies">
+<h2>Designing a Robust Benchmark for Effective Studies<a class="headerlink" href="#designing-a-robust-benchmark-for-effective-studies" title="Link to this heading"></a></h2>
+<p>When undertaking both exploratory and workhorse studies, the creation of a
+well-designed benchmark is a critical step. This benchmark is the basis upon
+which you'll test and evaluate your solvers. For exploratory studies, your
+benchmark can start simple and progressively evolve. However, when it comes to
+workhorse studies, the design of your benchmark demands meticulous attention to
+ensure comprehensiveness and reliability.</p>
+<p>While exploratory studies also benefit from a thoughtfully designed benchmark—as
+it accelerates insight acquisition—the primary emphasis at this stage is to have
+a functioning benchmark in place. This initial benchmark acts as a springboard,
+providing a foundation for deeper, more detailed analysis in the subsequent
+workhorse studies. The key is to balance the immediacy of starting with a
+benchmark against the long-term goal of refining it for more rigorous
+evaluations.</p>
+<p>Ideally, a robust benchmark would consist of a large set of real-world
+instances, closely reflecting the actual performance of your solver. Real-world
+instances, however, are often limited in quantity and may not provide enough
+data for a statistically significant benchmark. In such cases, it's advisable to
+explore existing benchmarks from literature, like the
+<a class="reference external" href="http://comopt.ifi.uni-heidelberg.de/software/TSPLIB95/">TSPLIB</a> for TSP.
+Leveraging established benchmarks allows for comparison with prior studies, but
+be cautious about their quality, as not all are equally well-constructed. For
+example, TSPLIB's limitations in terms of instance size variation and
+heterogeneity can hinder result aggregation.</p>
+<p>Therefore, creating custom instances might be necessary. When doing so, aim for
+enough instances per size category to establish reliable and statistically
+significant data points. For instance, generating 10 instances for each size
+category (e.g., 25, 50, 75, 100, 150, 200, 250, 300, 350, 400, 450, 500) can
+provide a solid basis for analysis. This approach, though modest in scale,
+suffices to illustrate the benchmarking process.</p>
+<p>Exercise caution with random instance generators, as they may not accurately
+represent real-world scenarios. For example, randomly generated TSP instances
+might lack collinear points common in real-world situations, like houses aligned
+on straight roads, or they might not replicate real-world clustering patterns.
+To better mimic reality, incorporate real-world data or use diverse generation
+methods to ensure a broader variety of instances. For the TSP, we could for
+example also have sampled from the larger TSPLIB instances.</p>
+<p>Consider conducting your evaluation using two distinct benchmarks, especially
+when dealing with different data types. For instance, you might have one
+benchmark derived from real-world data which, although highly relevant, is too
+limited in size to provide robust statistical insights. Simultaneously, you
+could use a second benchmark based on a larger set of random instances, better
+suited for detailed statistical analysis. This dual-benchmark approach allows
+you to demonstrate the consistency and reliability of your results, ensuring
+they are not merely artifacts of a particular dataset's characteristics. It's a
+strategy that adds depth to your evaluation, showcasing the robustness of your
+findings across varied data sources. We will use this approach below, generating
+robust plots from random instances, but also comparing them to real-world
+instances. Mixing the two benchmarks would not be advisable, as the random
+instances would dominate the results.</p>
+<p>Lastly, always separate the creation of your benchmark from the execution of
+experiments. Create and save instances in a separate process to minimize errors.
+The goal is to make your evaluation as error-proof as possible, avoiding the
+frustration and wasted effort of basing decisions on flawed data. Be
+particularly cautious with pseudo-random number generators; while theoretically
+deterministic, their use can inadvertently lead to irreproducible results.
+Sharing benchmarks is also more straightforward when you can distribute the
+instances themselves, rather than the code used to generate them.</p>
+</section>
+<section id="efficiently-managing-your-benchmarks">
+<h2>Efficiently Managing Your Benchmarks<a class="headerlink" href="#efficiently-managing-your-benchmarks" title="Link to this heading"></a></h2>
+<p>Managing benchmark data can become complex, especially with multiple experiments
+and research questions. Here are some strategies to keep things organized:</p>
+<ul>
+<li><p><strong>Folder Structure</strong>: Maintain a clear folder structure for your experiments,
+with a top-level <code class="docutils literal notranslate"><span class="pre">evaluations</span></code> folder and descriptive subfolders for each
+experiment. For our experiment we have the following structure:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>evaluations
+├── tsp
+│   ├── 2023-11-18_random_euclidean
+│   │   ├── PRIVATE_DATA
+│   │   │   ├── ... all data for debugging
+│   │   ├── PUBLIC_DATA
+│   │   │   ├── ... selected data to share
+│   │   ├── README.md: Provide a short description of the experiment
+│   │   ├── 00_generate_instances.py
+│   │   ├── 01_run_experiments.py
+│   │   ├── ....
+│   ├── 2023-11-18_tsplib
+│   │   ├── PRIVATE_DATA
+│   │   │   ├── ... all data for debugging
+│   │   ├── PUBLIC_DATA
+│   │   │   ├── ... selected data to share
+│   │   ├── README.md: Provide a short description of the experiment
+│   │   ├── 01_run_experiments.py
+│   │   ├── ....
+</pre></div>
+</div>
+</li>
+<li><p><strong>Redundancy and Documentation</strong>: While some redundancy is acceptable,
+comprehensive documentation of each experiment is crucial for future
+reference.</p></li>
+<li><p><strong>Simplified Results</strong>: Keep a streamlined version of your results for easy
+access, especially for plotting and sharing.</p></li>
+<li><p><strong>Data Storage</strong>: Save all your data, even if it seems insignificant at the
+time. This ensures you have a comprehensive dataset for later analysis or
+unexpected inquiries. Because this can become a lot of data, it's advisable to
+have two folders: One with all data and one with a selection of data that you
+want to share.</p></li>
+<li><p><strong>Experiment Flexibility</strong>: Design experiments to be interruptible and
+extendable, allowing for easy resumption or modification. This is especially
+important for exploratory studies, where you may need to make frequent
+adjustments. However, if your workhorse study takes a long time to run, you
+don't want to repeat it from scratch if you want to add a further solver.</p></li>
+<li><p><strong>Utilizing Technology</strong>: Employ tools like slurm for efficient distribution
+of experiments across computing clusters, saving time and resources. The
+faster you have your results, the faster you can act on them.</p></li>
+</ul>
+<p>Due to a lack of tools that exactly fitted my needs I developed
+<a class="reference external" href="https://github.com/d-krupke/AlgBench">AlgBench</a> to manage the results, and
+<a class="reference external" href="https://github.com/d-krupke/slurminade">Slurminade</a> to easily distribute the
+experiments on a cluster via a simple decorator. However, there may be better
+tools out there, now, especially from the Machine Learning community. Drop me a
+quick mail if you have found some tools you are happy with, and I will take a
+look myself.</p>
+</section>
+<section id="analyzing-the-results">
+<h2>Analyzing the results<a class="headerlink" href="#analyzing-the-results" title="Link to this heading"></a></h2>
+<p>Let us now come to the actual analysis of the results. We will focus on the
+following questions:</p>
+<ul class="simple">
+<li><p>Up to which size can we solve TSP instances with the different solvers?</p></li>
+<li><p>Which solver is the fastest?</p></li>
+<li><p>How does the performance change if we increase the optimality tolerance?</p></li>
+</ul>
+<blockquote>
+<div><p><strong>Our Benchmarks:</strong> We executed the four solvers with a time limit of 90s and
+the optimality tolerances [0.1%, 1%, 5%, 10%, 25%] on a random benchmark set
+and a TSPLIB benchmark set. The random benchmark set consists of 10 instances
+for each number of nodes [25, 50, 75, 100, 150, 200, &gt; 250, 300, 350, 400,
+450, 500]. The weights were chosen based on randomly embedding the nodes into
+a 2D plane and using the Euclidean distances. The TSPLIB benchmark consists of
+all euclidean instances with less than 500 nodes. It is critical to have a
+time limit, as otherwise, the benchmarks would take forever. You can find all
+find the whole experiment <a class="reference internal" href="#../evaluations/tsp/"><span class="xref myst">here</span></a>.</p>
+</div></blockquote>
+<p>Let us first look at the results of the random benchmark, as they are easier to
+interpret. We will then compare them to the TSPLIB benchmark.</p>
+<section id="random-instances">
+<h3>Random Instances<a class="headerlink" href="#random-instances" title="Link to this heading"></a></h3>
+<p>A common, yet simplistic method to assess a model's performance involves
+plotting its runtime against the size of the instances it processes. However,
+this approach can often lead to inaccurate interpretations, particularly because
+time-limited cutoffs can disproportionately affect the results. Instead of the
+expected exponential curves, you will get skewed sigmoidal curves. Consequently,
+such plots might not provide a clear understanding of the instance sizes your
+model is capable of handling efficiently.</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head text-center"><p><img alt="Runtime" src="_images/runtime.png" /></p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td class="text-center"><p>The runtimes are sigmoidal instead of exponential because the time limit skews the results. The runtime can frequently exceed the time limit, because of expensive model building, etc. Thus, a pure runtime plot says surprisingly little (or is misleading) and can usually be discarded.</p></td>
+</tr>
+</tbody>
+</table>
+<p>To gain a more accurate insight into the capacities of your model, consider
+plotting the proportion of instances of a certain size that your model
+successfully solves. This method requires a well-structured benchmark to yield
+meaningful statistics for each data point. Without this structure, the resulting
+curve may appear erratic, making it challenging to draw dependable conclusions.</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head text-center"><p><img alt="Solved over size" src="_images/solved_over_size.png" /></p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td class="text-center"><p>For each x-value: What are the chances (y-values) that a model of this size (x) can be solved?</p></td>
+</tr>
+</tbody>
+</table>
+<p>Furthermore, if the pursuit is not limited to optimal solutions but extends to
+encompass solutions of acceptable quality, the analysis can be expanded. One can
+plot the number of instances that the model solves within a defined optimality
+tolerance, as demonstrated in the subsequent figure:</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head text-center"><p><img alt="Solved over size with optimality tolerance" src="_images/solved_over_size_opt_tol.png" /></p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td class="text-center"><p>For each x-value: What are the chances (y-values) that a model of this size (x) can be solved to what quality (line style)?</p></td>
+</tr>
+</tbody>
+</table>
+<p>For a comparative analysis across various models against an arbitrary benchmark,
+cactus plots emerge as a potent tool. These plots illustrate the number of
+instances solved over time, providing a clear depiction of a model's efficiency.
+For example, a coordinate of $x=10, y=20$ on such a plot signifies that 20
+instances were solved within a span of 10 seconds each. It is important to note,
+however, that these plots do not facilitate predictions for any specific
+instance unless the benchmark set is thoroughly familiar. They do allow for an
+estimation of which model is quicker for simpler instances and which can handle
+more challenging instances within a reasonable timeframe. The question of what
+exactly is a simple or challenging instance, however, is better answered by the
+previous plots.</p>
+<p>Cactus plots are notably prevalent in the evaluation of SAT-solvers, where
+instance size is a poor indicator of difficulty. A more detailed discussion on
+this subject can be found in the referenced academic paper:
+<a class="reference external" href="http://www.sc-square.org/CSA/workshop2-papers/RP3-FinalVersion.pdf">Benchmarking Solvers, SAT-style by Brain, Davenport, and Griggio</a></p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head text-center"><p><img alt="Cactus Plot 1" src="_images/cactus_plot.png" /></p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td class="text-center"><p>For each x-value: How many (y) of the benchmark instances could have been solved with this time limit (x)?</p></td>
+</tr>
+</tbody>
+</table>
+<p>Additionally, the analysis can be refined to account for different quality
+tolerances. This requires either multiple experimental runs or tracking the
+progression of the lower and upper bounds within the solver. In the context of
+CP-SAT, for instance, this tracking can be implemented via the Solution
+Callback, although its activation is may depend on updates to the objective
+rather than the bounds.</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head text-center"><p><img alt="Cactus Plot 1" src="_images/cactus_plot_opt_tol.png" /></p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td class="text-center"><p>For each x-value: How many (y) of the benchmark instances could have been solved to a specific quality (line style) with this time limit (x)?</p></td>
+</tr>
+</tbody>
+</table>
+<p>Instead of plotting the number of solved instances, one can also plot the number
+of unsolved instances over time. This can be easier to read and additionally
+indicates the number of instances in the benchmark. However, I personally do not
+have a preference for one or the other, and would recommend using the one that
+is more intuitive to read for you.</p>
+</section>
+<section id="tsplib">
+<h3>TSPLIB<a class="headerlink" href="#tsplib" title="Link to this heading"></a></h3>
+<p>Our second benchmark for the Traveling Salesman Problem leverages the TSPLIB, a
+set of instances based on real-world data. This will introduce two challenges:</p>
+<ol class="arabic simple">
+<li><p>The difficulty in aggregating benchmark data due to its limited size and
+heterogeneous nature.</p></li>
+<li><p>Notable disparities in results, arising from the differing characteristics of
+random and real-world instances.</p></li>
+</ol>
+<p>The irregularity in instance sizes makes traditional plotting methods, like
+plotting the number of solved instances over time, less effective. While data
+smoothing methods, such as rolling averages, are available, they too have their
+limitations.</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head text-center"><p><img alt="Variation in Data" src="evaluations/tsp/2023-11-18_tsplib/PUBLIC_DATA/solved_over_size.png" /></p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td class="text-center"><p>Such a plot may prove inefficient when dealing with high variability, particularly when some data points are underrepresented.</p></td>
+</tr>
+</tbody>
+</table>
+<p>In contrast, the cactus plot still provides a clear and comprehensive
+perspective of various model performances. An interesting observation we can
+clearly see in it, is the diminished capability of the &quot;Iterative Dantzig&quot; model
+in solving instances, and a closer performance alignment between the
+<code class="docutils literal notranslate"><span class="pre">AddCircuit</span></code> and Gurobi models.</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head text-center"><p><img alt="Effective Cactus Plot" src="_images/cactus_plot_opt_tol1.png" /></p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td class="text-center"><p>Cactus plots maintain clarity and relevance, and show a performance differences between TSPLib and random instances.</p></td>
+</tr>
+</tbody>
+</table>
+<p>However, since cactus plots do not offer insights into individual instances,
+it's beneficial to complement them with a detailed table of results for the
+specific model you are focusing on. This approach ensures a more nuanced
+understanding of model performance across varied instances. The following table
+provides the results for the <code class="docutils literal notranslate"><span class="pre">AddCircuit</span></code>-model.</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head text-left"><p>Instance</p></th>
+<th class="head text-right"><p># nodes</p></th>
+<th class="head text-right"><p>runtime</p></th>
+<th class="head text-right"><p>lower bound</p></th>
+<th class="head text-right"><p>objective</p></th>
+<th class="head text-right"><p>opt. gap</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td class="text-left"><p>att48</p></td>
+<td class="text-right"><p>48</p></td>
+<td class="text-right"><p>0.47</p></td>
+<td class="text-right"><p>33522</p></td>
+<td class="text-right"><p>33522</p></td>
+<td class="text-right"><p>0</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>eil51</p></td>
+<td class="text-right"><p>51</p></td>
+<td class="text-right"><p>0.69</p></td>
+<td class="text-right"><p>426</p></td>
+<td class="text-right"><p>426</p></td>
+<td class="text-right"><p>0</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>st70</p></td>
+<td class="text-right"><p>70</p></td>
+<td class="text-right"><p>0.8</p></td>
+<td class="text-right"><p>675</p></td>
+<td class="text-right"><p>675</p></td>
+<td class="text-right"><p>0</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>eil76</p></td>
+<td class="text-right"><p>76</p></td>
+<td class="text-right"><p>2.49</p></td>
+<td class="text-right"><p>538</p></td>
+<td class="text-right"><p>538</p></td>
+<td class="text-right"><p>0</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>pr76</p></td>
+<td class="text-right"><p>76</p></td>
+<td class="text-right"><p>54.36</p></td>
+<td class="text-right"><p>108159</p></td>
+<td class="text-right"><p>108159</p></td>
+<td class="text-right"><p>0</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>kroD100</p></td>
+<td class="text-right"><p>100</p></td>
+<td class="text-right"><p>9.72</p></td>
+<td class="text-right"><p>21294</p></td>
+<td class="text-right"><p>21294</p></td>
+<td class="text-right"><p>0</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>kroC100</p></td>
+<td class="text-right"><p>100</p></td>
+<td class="text-right"><p>5.57</p></td>
+<td class="text-right"><p>20749</p></td>
+<td class="text-right"><p>20749</p></td>
+<td class="text-right"><p>0</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>kroB100</p></td>
+<td class="text-right"><p>100</p></td>
+<td class="text-right"><p>6.2</p></td>
+<td class="text-right"><p>22141</p></td>
+<td class="text-right"><p>22141</p></td>
+<td class="text-right"><p>0</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>kroE100</p></td>
+<td class="text-right"><p>100</p></td>
+<td class="text-right"><p>9.06</p></td>
+<td class="text-right"><p>22049</p></td>
+<td class="text-right"><p>22068</p></td>
+<td class="text-right"><p>0</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>kroA100</p></td>
+<td class="text-right"><p>100</p></td>
+<td class="text-right"><p>8.41</p></td>
+<td class="text-right"><p>21282</p></td>
+<td class="text-right"><p>21282</p></td>
+<td class="text-right"><p>0</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>eil101</p></td>
+<td class="text-right"><p>101</p></td>
+<td class="text-right"><p>2.24</p></td>
+<td class="text-right"><p>629</p></td>
+<td class="text-right"><p>629</p></td>
+<td class="text-right"><p>0</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>lin105</p></td>
+<td class="text-right"><p>105</p></td>
+<td class="text-right"><p>1.37</p></td>
+<td class="text-right"><p>14379</p></td>
+<td class="text-right"><p>14379</p></td>
+<td class="text-right"><p>0</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>pr107</p></td>
+<td class="text-right"><p>107</p></td>
+<td class="text-right"><p>1.2</p></td>
+<td class="text-right"><p>44303</p></td>
+<td class="text-right"><p>44303</p></td>
+<td class="text-right"><p>0</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>pr124</p></td>
+<td class="text-right"><p>124</p></td>
+<td class="text-right"><p>33.8</p></td>
+<td class="text-right"><p>59009</p></td>
+<td class="text-right"><p>59030</p></td>
+<td class="text-right"><p>0</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>pr136</p></td>
+<td class="text-right"><p>136</p></td>
+<td class="text-right"><p>35.98</p></td>
+<td class="text-right"><p>96767</p></td>
+<td class="text-right"><p>96861</p></td>
+<td class="text-right"><p>0</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>pr144</p></td>
+<td class="text-right"><p>144</p></td>
+<td class="text-right"><p>21.27</p></td>
+<td class="text-right"><p>58534</p></td>
+<td class="text-right"><p>58571</p></td>
+<td class="text-right"><p>0</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>kroB150</p></td>
+<td class="text-right"><p>150</p></td>
+<td class="text-right"><p>58.44</p></td>
+<td class="text-right"><p>26130</p></td>
+<td class="text-right"><p>26130</p></td>
+<td class="text-right"><p>0</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>kroA150</p></td>
+<td class="text-right"><p>150</p></td>
+<td class="text-right"><p>90.94</p></td>
+<td class="text-right"><p>26498</p></td>
+<td class="text-right"><p>26977</p></td>
+<td class="text-right"><p>2%</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>pr152</p></td>
+<td class="text-right"><p>152</p></td>
+<td class="text-right"><p>15.28</p></td>
+<td class="text-right"><p>73682</p></td>
+<td class="text-right"><p>73682</p></td>
+<td class="text-right"><p>0</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>kroA200</p></td>
+<td class="text-right"><p>200</p></td>
+<td class="text-right"><p>90.99</p></td>
+<td class="text-right"><p>29209</p></td>
+<td class="text-right"><p>29459</p></td>
+<td class="text-right"><p>1%</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>kroB200</p></td>
+<td class="text-right"><p>200</p></td>
+<td class="text-right"><p>31.69</p></td>
+<td class="text-right"><p>29437</p></td>
+<td class="text-right"><p>29437</p></td>
+<td class="text-right"><p>0</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>pr226</p></td>
+<td class="text-right"><p>226</p></td>
+<td class="text-right"><p>74.61</p></td>
+<td class="text-right"><p>80369</p></td>
+<td class="text-right"><p>80369</p></td>
+<td class="text-right"><p>0</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>gil262</p></td>
+<td class="text-right"><p>262</p></td>
+<td class="text-right"><p>91.58</p></td>
+<td class="text-right"><p>2365</p></td>
+<td class="text-right"><p>2416</p></td>
+<td class="text-right"><p>2%</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>pr264</p></td>
+<td class="text-right"><p>264</p></td>
+<td class="text-right"><p>92.03</p></td>
+<td class="text-right"><p>49121</p></td>
+<td class="text-right"><p>49512</p></td>
+<td class="text-right"><p>1%</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>pr299</p></td>
+<td class="text-right"><p>299</p></td>
+<td class="text-right"><p>92.18</p></td>
+<td class="text-right"><p>47709</p></td>
+<td class="text-right"><p>49217</p></td>
+<td class="text-right"><p>3%</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>linhp318</p></td>
+<td class="text-right"><p>318</p></td>
+<td class="text-right"><p>92.45</p></td>
+<td class="text-right"><p>41915</p></td>
+<td class="text-right"><p>52032</p></td>
+<td class="text-right"><p>19%</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>lin318</p></td>
+<td class="text-right"><p>318</p></td>
+<td class="text-right"><p>92.43</p></td>
+<td class="text-right"><p>41915</p></td>
+<td class="text-right"><p>52025</p></td>
+<td class="text-right"><p>19%</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>pr439</p></td>
+<td class="text-right"><p>439</p></td>
+<td class="text-right"><p>94.22</p></td>
+<td class="text-right"><p>105610</p></td>
+<td class="text-right"><p>163452</p></td>
+<td class="text-right"><p>35%</p></td>
+</tr>
+</tbody>
+</table>
+<p>This should highlight that often you need a combination of different benchmarks
+and plots to get a good understanding of the performance of your model.</p>
+</section>
+</section>
+<section id="conclusion">
+<h2>Conclusion<a class="headerlink" href="#conclusion" title="Link to this heading"></a></h2>
+<p>Benchmarking solvers for NP-hard problems is not as straightforward as it might
+seem at first. There are many pitfalls and often there is no perfect solution.
+On the example of the TSP, we have seen how we can still get some useful results
+and nice plots on which we can base our decisions.</p>
+<blockquote>
+<div><p>If you want to make an automated decision on what model/solver to use, things
+can get complicated. Often, there is none that dominates on all instances. If
+you want a single metric for comparing the performance, there is no perfect
+solution. I am actually the technical lead and co-organizer of a yearly
+challenge on solving hard optimization problems in computational geometry
+<a class="reference external" href="https://cgshop.ibr.cs.tu-bs.de/">CG:SHOP</a>, which is part of
+<a class="reference external" href="https://apps.utdallas.edu/SOCG23/challenge.html">CG Week</a>. Here, I am
+confronted with scoring the solutions of the participants, without having any
+useful bounds. It turned out that giving a score between zero and one for each
+instance, based on the squared difference to the best solution, works quite
+well. While it still has flaws, it is showed to be relatively fair and robust.
+The general problem of selecting the right strategy for a specific instance is
+called
+<a class="reference external" href="https://en.wikipedia.org/wiki/Algorithm_selection">Algorithm Selection</a>
+problem and can be surprisingly complex, too.</p>
+</div></blockquote>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="05_how-does-it-work.html" class="btn btn-neutral float-left" title="How does it work?" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="07_large-neighborhood-search.html" class="btn btn-neutral float-right" title="Using CP-SAT for Bigger Problems with Large Neighborhood Search" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Dominik Krupke (TU Braunschweig, IBR, Algorithms Group).</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
