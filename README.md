@@ -92,14 +92,13 @@ following content awaits you in this primer:
 > to make it understandable for anyone interested in
 > [combinatorial optimization](https://en.wikipedia.org/wiki/Combinatorial_optimization).
 
-> **About the (main) author:** > [Dr. Dominik Krupke](https://krupke.cc) is a
+> **About the (main) author:**  [Dr. Dominik Krupke](https://krupke.cc) is a
 > postdoctoral researcher at the
 > [Algorithms Group](https://www.ibr.cs.tu-bs.de/alg) at TU Braunschweig, where
 > he researches and teaches on how to solve NP-hard problems in practice. He
 > started writing this primer as course material for his students, but continued
 > and extended it (mostly in his spare time) to make it available to a wider
 > audience.
-
 ## Installation
 
 We are using Python 3 in this primer and assume that you have a working Python 3
@@ -161,7 +160,6 @@ For further guidance, consider the
 [hardware recommendations for the Gurobi solver](https://support.gurobi.com/hc/en-us/articles/8172407217041-What-hardware-should-I-select-when-running-Gurobi-),
 which are likely to be similar. Since we frequently use Gurobi in addition to
 CP-SAT, our hardware choices were also influenced by their recommendations.
-
 ## Example
 
 Before we dive into any internals, let us take a quick look at a simple
@@ -259,25 +257,25 @@ optimization, if you cannot predict which strategy will perform best.
 The mathematical model of the code above would usually be written by experts
 something like this:
 
-```math
+$$
 \max 30x + 50y
-```
+$$
 
-```math
+$$
 \text{s.t. } x+y \leq 30
-```
+$$
 
-```math
+$$
 \quad 0\leq x \leq 100
-```
+$$
 
-```math
+$$
 \quad 0\leq y \leq 100
-```
+$$
 
-```math
+$$
 x,y \in \mathbb{Z}
-```
+$$
 
 The `s.t.` stands for `subject to`, sometimes also read as `such that`.
 
@@ -307,8 +305,6 @@ you also do not need to fine-tune any
 higher-level constraints, such as conditional constraints that are only enforced
 if some variable is set to true, in MIPs yourself, because the computer is not
 very good at that).
-
----
 
 ## Modelling
 
@@ -454,9 +450,9 @@ model.Minimize(
 
 This objective evaluates to
 
-```math
+$$
 \min \sum_{i=0}^{9} i\cdot x_i \text{ if } i \text{ is even else } i\cdot \neg x_i
-```
+$$
 
 To implement a
 [lexicographic optimization](https://en.wikipedia.org/wiki/Lexicographic_optimization),
@@ -924,7 +920,7 @@ solution is always the same, just scaled).
 | 1000x      | 75s     |
 | 10_000x    | >15min  |
 
-See [this notebook](./examples/add_no_overlap_2d_scaling.ipynb) for the full
+See [this notebook](../examples/add_no_overlap_2d_scaling.ipynb) for the full
 example.
 
 However, while playing around with less documented features, I noticed that the
@@ -947,7 +943,6 @@ CP-SAT has even more constraints, but I think I covered the most important ones.
 If you need more, you can check out the
 [official documentation](https://developers.google.com/optimization/reference/python/sat/python/cp_model#cp_model.CpModel).
 
----
 
 ## Parameters
 
@@ -1443,7 +1438,6 @@ some conflicts.
 > it performed worse. Further, I assume that CP-SAT can learn the best strategy
 > (Gurobi does such a thing, too) much better dynamically on its own.
 
----
 
 ## How does it work?
 
@@ -1621,7 +1615,6 @@ alternative solver capable of efficiently addressing these specific constraints.
 At times, NP-hard problems inherently pose formidable challenges, leaving us
 with no alternative but to seek more manageable modeling approaches instead of
 looking for better solvers.
-
 ## Benchmarking your Model
 
 Benchmarking is an essential step if your model isn't yet meeting the
@@ -2026,7 +2019,6 @@ and nice plots on which we can base our decisions.
 > called
 > [Algorithm Selection](https://en.wikipedia.org/wiki/Algorithm_selection)
 > problem and can be surprisingly complex, too.
-
 ## Using CP-SAT for Bigger Problems with Large Neighborhood Search
 
 CP-SAT is great at solving small and medium-sized problems. But what if you have
@@ -2118,7 +2110,7 @@ capacity with the deleted items and the newly selected items. Repeat this until
 you are happy with the solution quality. The number of items you delete and
 select can be fixed such that the problem can be easily solved by CP-SAT. You
 can find a full implementation under
-[examples/lns_knapsack.ipynb](examples/lns_knapsack.ipynb).
+[examples/lns_knapsack.ipynb](./examples/lns_knapsack.ipynb).
 
 Let us look only on an example here:
 
@@ -2243,7 +2235,7 @@ Regions in red are selected due to the high cost of the tour within them. Once
 optimized, the center of that region is added to a tabu list, preventing it from
 being chosen again.
 
-|                                                                                           ![Large Neighborhood Search Geometry Example](./images/lns_pcpp.png)                                                                                            |
+|          ![Large Neighborhood Search Geometry Example](./images/lns_pcpp.png)                                                                                            |
 | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: |
 | Large Neighbordhood Search for Coverage Path Planning by repeatedly selecting a geometric region (red) and optimizing the tour within it. The red parts of the tour highlight the changes in the iteration. Read from left to right, and from up to down. |
 
