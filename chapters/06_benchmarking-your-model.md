@@ -235,7 +235,7 @@ following questions:
 > a 2D plane and using the Euclidean distances. The TSPLIB benchmark consists of
 > all euclidean instances with less than 500 nodes. It is critical to have a
 > time limit, as otherwise, the benchmarks would take forever. You can find all
-> find the whole experiment [here](../evaluations/tsp/).
+> find the whole experiment [here](./evaluations/tsp/).
 
 Let us first look at the results of the random benchmark, as they are easier to
 interpret. We will then compare them to the TSPLIB benchmark.
@@ -250,7 +250,7 @@ expected exponential curves, you will get skewed sigmoidal curves. Consequently,
 such plots might not provide a clear understanding of the instance sizes your
 model is capable of handling efficiently.
 
-|                                                                                                      ![Runtime](../evaluations/tsp/2023-11-18_random_euclidean/PUBLIC_DATA/runtime.png)                                                                                                      |
+|                                                                                                      ![Runtime](./evaluations/tsp/2023-11-18_random_euclidean/PUBLIC_DATA/runtime.png)                                                                                                      |
 | :-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: |
 | The runtimes are sigmoidal instead of exponential because the time limit skews the results. The runtime can frequently exceed the time limit, because of expensive model building, etc. Thus, a pure runtime plot says surprisingly little (or is misleading) and can usually be discarded. |
 
@@ -260,7 +260,7 @@ successfully solves. This method requires a well-structured benchmark to yield
 meaningful statistics for each data point. Without this structure, the resulting
 curve may appear erratic, making it challenging to draw dependable conclusions.
 
-| ![Solved over size](../evaluations/tsp/2023-11-18_random_euclidean/PUBLIC_DATA/solved_over_size.png) |
+| ![Solved over size](./evaluations/tsp/2023-11-18_random_euclidean/PUBLIC_DATA/solved_over_size.png) |
 | :-------------------------------------------------------------------------------------------------: |
 |   For each x-value: What are the chances (y-values) that a model of this size (x) can be solved?    |
 
@@ -269,7 +269,7 @@ encompass solutions of acceptable quality, the analysis can be expanded. One can
 plot the number of instances that the model solves within a defined optimality
 tolerance, as demonstrated in the subsequent figure:
 
-| ![Solved over size with optimality tolerance](../evaluations/tsp/2023-11-18_random_euclidean/PUBLIC_DATA/solved_over_size_opt_tol.png) |
+| ![Solved over size with optimality tolerance](./evaluations/tsp/2023-11-18_random_euclidean/PUBLIC_DATA/solved_over_size_opt_tol.png) |
 | :-----------------------------------------------------------------------------------------------------------------------------------: |
 |      For each x-value: What are the chances (y-values) that a model of this size (x) can be solved to what quality (line style)?      |
 
@@ -290,7 +290,7 @@ instance size is a poor indicator of difficulty. A more detailed discussion on
 this subject can be found in the referenced academic paper:
 [Benchmarking Solvers, SAT-style by Brain, Davenport, and Griggio](http://www.sc-square.org/CSA/workshop2-papers/RP3-FinalVersion.pdf)
 
-|        ![Cactus Plot 1](../evaluations/tsp/2023-11-18_random_euclidean/PUBLIC_DATA/cactus_plot.png)         |
+|        ![Cactus Plot 1](./evaluations/tsp/2023-11-18_random_euclidean/PUBLIC_DATA/cactus_plot.png)         |
 | :--------------------------------------------------------------------------------------------------------: |
 | For each x-value: How many (y) of the benchmark instances could have been solved with this time limit (x)? |
 
@@ -301,7 +301,7 @@ CP-SAT, for instance, this tracking can be implemented via the Solution
 Callback, although its activation is may depend on updates to the objective
 rather than the bounds.
 
-|                      ![Cactus Plot 1](../evaluations/tsp/2023-11-18_random_euclidean/PUBLIC_DATA/cactus_plot_opt_tol.png)                      |
+|                      ![Cactus Plot 1](./evaluations/tsp/2023-11-18_random_euclidean/PUBLIC_DATA/cactus_plot_opt_tol.png)                      |
 | :-------------------------------------------------------------------------------------------------------------------------------------------: |
 | For each x-value: How many (y) of the benchmark instances could have been solved to a specific quality (line style) with this time limit (x)? |
 
@@ -336,7 +336,7 @@ clearly see in it, is the diminished capability of the "Iterative Dantzig" model
 in solving instances, and a closer performance alignment between the
 `AddCircuit` and Gurobi models.
 
-|          ![Effective Cactus Plot](../evaluations/tsp/2023-11-18_tsplib/PUBLIC_DATA/cactus_plot_opt_tol.png)           |
+|          ![Effective Cactus Plot](./evaluations/tsp/2023-11-18_tsplib/PUBLIC_DATA/cactus_plot_opt_tol.png)           |
 | :------------------------------------------------------------------------------------------------------------------: |
 | Cactus plots maintain clarity and relevance, and show a performance differences between TSPLib and random instances. |
 

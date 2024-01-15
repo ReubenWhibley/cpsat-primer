@@ -428,7 +428,7 @@ The log is actually very interesting to understand CP-SAT, but also to learn
 about the optimization problem at hand. It gives you a lot of details on, e.g.,
 how many variables could be directly removed or which techniques contributed to
 lower and upper bounds the most. We take a more detailed look onto the log
-[here](../understanding_the_log.md).
+[here](./understanding_the_log.md).
 
 ### Decision Strategy
 

@@ -92,7 +92,7 @@ discussed further below, has the following runtime for different resolutions:
 always the same, just scaled, and there was no objective, i.e., only a feasible
 solution had to be found. Note that this is just an example, not a
 representative benchmark. See
-[./examples/add_no_overlap_2d_scaling.ipynb](../examples/add_no_overlap_2d_scaling.ipynb)
+[./examples/add_no_overlap_2d_scaling.ipynb](./examples/add_no_overlap_2d_scaling.ipynb)
 for the code. If you have a problem with a lot of continuous variables, such as
 [network flow problems](https://en.wikipedia.org/wiki/Network_flow_problem), you
 are probably better served with a MIP-solver.
@@ -272,7 +272,7 @@ penalty. You may also want to use `!=` instead of `AllDifferent` if you apply it
 to overlapping sets of variables without proper optimization, because then
 CP-SAT will do the inference for you.
 
-In [./examples/add_all_different.ipynb](../examples/add_all_different.ipynb) you
+In [./examples/add_all_different.ipynb](./examples/add_all_different.ipynb) you
 can find a quick experiment based on the graph coloring problem. In the graph
 coloring problem, the colors of two adjacent vertices have to be different. This
 can be easily modelled by `!=` or `AllDifferent` constraints on every edge.
@@ -394,11 +394,11 @@ print("Tour:", tour)
 You can use this constraint very flexibly for many tour problems. We added three
 examples:
 
-- [./examples/add_circuit.py](../examples/add_circuit.py): The example above,
+- [./examples/add_circuit.py](./examples/add_circuit.py): The example above,
   slightly extended. Find out how large you can make the graph.
-- [./examples/add_circuit_budget.py](../examples/add_circuit_budget.py): Find the
+- [./examples/add_circuit_budget.py](./examples/add_circuit_budget.py): Find the
   largest tour with a given budget. This will be a bit more difficult to solve.
-- [./examples/add_circuit_multi_tour.py](../examples/add_circuit_multi_tour.py):
+- [./examples/add_circuit_multi_tour.py](./examples/add_circuit_multi_tour.py):
   Allow $k$ tours, which in sum need to be minimal and cover all vertices.
 
 The most powerful TSP-solver _concorde_ uses a linear programming based
@@ -428,7 +428,7 @@ internally. Using the `AddCircuit` constraint is thus highly recommendable for
 any circle or path constraints.
 
 In
-[./examples/add_circuit_comparison.ipynb](../examples/add_circuit_comparison.ipynb),
+[./examples/add_circuit_comparison.ipynb](./examples/add_circuit_comparison.ipynb),
 we compare the performance of some models for the TSP, to estimate the
 performance of CP-SAT for the TSP.
 
@@ -594,7 +594,7 @@ for i, box in enumerate(boxes):
 
 > The keywords `start` may be named `begin` in some versions of ortools.
 
-See [this notebook](../examples/add_no_overlap_2d.ipynb) for the full example.
+See [this notebook](./examples/add_no_overlap_2d.ipynb) for the full example.
 
 There is also the option for optional intervals, i.e., intervals that may be
 skipped. This would allow you to have multiple containers or do a knapsack-like

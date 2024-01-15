@@ -89,7 +89,7 @@ capacity with the deleted items and the newly selected items. Repeat this until
 you are happy with the solution quality. The number of items you delete and
 select can be fixed such that the problem can be easily solved by CP-SAT. You
 can find a full implementation under
-[examples/lns_knapsack.ipynb](../examples/lns_knapsack.ipynb).
+[examples/lns_knapsack.ipynb](./examples/lns_knapsack.ipynb).
 
 Let us look only on an example here:
 
@@ -214,7 +214,7 @@ Regions in red are selected due to the high cost of the tour within them. Once
 optimized, the center of that region is added to a tabu list, preventing it from
 being chosen again.
 
-|          ![Large Neighborhood Search Geometry Example](../images/lns_pcpp.png)                                                                                            |
+|          ![Large Neighborhood Search Geometry Example](./images/lns_pcpp.png)                                                                                            |
 | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: |
 | Large Neighbordhood Search for Coverage Path Planning by repeatedly selecting a geometric region (red) and optimizing the tour within it. The red parts of the tour highlight the changes in the iteration. Read from left to right, and from up to down. |
 
@@ -236,7 +236,7 @@ demonstrated in an animation crafted by two of my students, Gabriel Gehrke and
 Laurenz Illner. They incorporated four distinct neighborhoods and utilized ALNS
 to dynamically select the most effective one.
 
-|                                                                                                                                                                                                 ![ALNS TSP](../images/alns_tsp_compr.gif)                                                                                                                                                                                                  |
+|                                                                                                                                                                                                 ![ALNS TSP](./images/alns_tsp_compr.gif)                                                                                                                                                                                                  |
 | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: |
 | Animation of an Adaptive Large Neighborhood Search for the classical Traveling Salesman Problem. It uses four different neighborhood strategies which are selected randomly with a probability based on their success rate in previous iterations. If you check the logs of the latest (v9.8) version of CP-SAT, it also rates the performance of its LNS-strategies and uses the best performing strategies more often (UCB1-algorithm). |
 

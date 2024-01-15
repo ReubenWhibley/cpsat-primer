@@ -93,7 +93,7 @@ need to understand the constraint programming part of CP-SAT.
 > Originally, I wrote a short introduction into each of the topics, but I
 > decided to remove them as the material I linked to is much better than what I
 > could have written. You can find a backup of the old version
-> [here](../old_how_does_it_work.md).
+> [here](./old_how_does_it_work.md).
 
 ### What happens in CP-SAT on solve?
 
